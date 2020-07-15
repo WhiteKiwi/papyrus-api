@@ -8,6 +8,11 @@ module.exports = {
 	'parserOptions': {
 		'ecmaVersion': 11
 	},
+	'globals': {
+		'process': 'writable',
+		'describe': 'writable',
+		'it': 'writable'
+	},
 	'rules': {
 		'indent': [
 			'error',
@@ -24,6 +29,9 @@ module.exports = {
 		'semi': [
 			'error',
 			'always'
+		],
+		'no-unused-vars': [
+			'error', { 'args': 'none' }
 		]
 	}
 };

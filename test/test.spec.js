@@ -1,6 +1,3 @@
-/*eslint no-unused-vars: ["error", { "args": "none" }]*/
-/*global describe it*/
-
 const request = require('supertest');
 const app = require('../app');
 
