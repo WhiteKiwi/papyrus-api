@@ -6,6 +6,7 @@ router.get('/', (req, res) => res.send('Hello, world!'));
 
 // USER API
 router.get('/users/', userController.getUser);
+router.post('/users/', userController.addUser);
 
 // TODO API
 router.get('/todos/', todoController.getTodos);
