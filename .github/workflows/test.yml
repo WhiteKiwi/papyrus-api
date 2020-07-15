@@ -23,8 +23,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: create env file
-      run: |
-        touch .env
-        echo ${{ secrets.ENVIRONMENT_VARS }} >> .env
+      run: 'echo "$ENV_VARS" > .env'
+      shell: bash
+      env:
+        ENV_VARS: ${{ secrets.ENVIRONMENT_VARS }}
     - run: npm install
     - run: npm test
