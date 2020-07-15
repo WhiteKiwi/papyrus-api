@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "mocha --exit",
+    "test": "mocha --exit --timeout 5000",
     "lint": "./node_modules/.bin/eslint .",
     "lint-fix": "./node_modules/.bin/eslint . --fix"
   },
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/WhiteKiwi/Todolist-Server#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mysql": "^2.18.1"
   },

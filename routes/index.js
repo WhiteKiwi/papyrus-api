@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const controller = require('./controller');
+const todoController = require('../controller/todos');
 
-router.get('/', controller.mainView);
+router.get('/', todoController.getTodos);
 
 module.exports = router;
