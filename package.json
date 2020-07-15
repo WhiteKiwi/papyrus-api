@@ -1,0 +1,24 @@
+{
+  "name": "todolist-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WhiteKiwi/Todolist-Server.git"
+  },
+  "author": "Kiwi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WhiteKiwi/Todolist-Server/issues"
+  },
+  "homepage": "https://github.com/WhiteKiwi/Todolist-Server#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  }
+}
