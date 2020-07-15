@@ -1,9 +1,9 @@
-const Todos = require('../models/todos');
+const todos = require('../models/todos');
 
 module.exports = {
 	getTodos: function (req, res) {
-		Todos.getTodos().then((rows) => {
-			res.send(rows);
+		todos.getTodos().then((rows) => {
+			res.json(rows);
 		}).catch((err) => { 
 			console.log(err);
 			throw err; 
