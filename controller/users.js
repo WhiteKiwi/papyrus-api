@@ -3,15 +3,18 @@ const users = require('../models/users');
 module.exports = {
 	getUser: function (req, res) {
 		if (req.query.id) {
-			// TODO: 없는 계정 404 처리
 			users.getUser(req.query.id).then((user) => {
-				res.json(user);
+				if (user) {
+					res.json(user);
+				} else {
+					res.status(404).json({ 'errorMsg': '존재하지 않는 유저입니다.' });
+				}
 			}).catch((err) => {
 				console.log(err);
 				throw err;
 			});
 		} else {
-			res.status(400).json({'error': 'user id가 필요합니다.'});
+			res.status(400).json({ 'errorMsg': 'user id가 필요합니다.' });
 		}
 	},
 	addUser: function (req, res) {
@@ -29,7 +32,7 @@ module.exports = {
 				throw err;
 			});
 		} else {
-			res.status(400).json({'error': 'id, password 또는 nickname이 누락되었습니다.'});
+			res.status(400).json({ 'errorMsg': 'id, password 또는 nickname이 누락되었습니다.' });
 		}
 	}
 };
