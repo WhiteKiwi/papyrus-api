@@ -22,5 +22,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - name: create env file
+      run: 'echo "$ENV_VARS" > .env'
+      shell: bash
+      env:
+        ENV_VARS: ${{ secrets.ENVIRONMENT_VARS }}
     - run: npm install
     - run: npm test
