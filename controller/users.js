@@ -1,7 +1,8 @@
 const users = require('../models/users');
 
 module.exports = {
-	getUser: function (req, res) {
+	// GET /users/?id= - user id에 해당하는 유저 정보 반환
+	getUserInfo: function (req, res) {
 		if (req.query.id) {
 			users.getUser(req.query.id).then((user) => {
 				if (user) {
@@ -17,7 +18,8 @@ module.exports = {
 			res.status(400).json({ 'errorMsg': 'user id가 필요합니다.' });
 		}
 	},
-	addUser: function (req, res) {
+	// POST /users/ - 유저 생성
+	register: function (req, res) {
 		let id = req.body.id;
 		let password = req.body.password;
 		let nickname = req.body.nickname;
@@ -34,5 +36,30 @@ module.exports = {
 		} else {
 			res.status(400).json({ 'errorMsg': 'id, password 또는 nickname이 누락되었습니다.' });
 		}
-	}
+	},
+	// PATCH /users/ - 유저 정보 업데이트 생성
+	updateUserInfo: function (req, res) {
+		// TODO: API 구현
+		res.send("Comming Soon");
+	},
+	// DELETE /users/ - 유저 삭제
+	withdrawal: function (req, res) {
+		// TODO: API 구현
+		res.send("Comming Soon");
+	},
+	// GET /users/validate-user-id
+	validateUserID: function (req, res) {
+		// TODO: API 구현
+		res.send("Comming Soon");
+	},
+	// GET /users/validate-nickname
+	validateNickname: function (req, res) {
+		// TODO: API 구현
+		res.send("Comming Soon");
+	},
+	// PATCH /users/change-password
+	changePassword: function (req, res) {
+		// TODO: email or phone 인증을 이용해서 API 구현
+		res.send("Comming Soon");
+	},
 };

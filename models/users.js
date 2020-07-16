@@ -1,9 +1,10 @@
 const connection = require('../config/database.js').connect();
 const SALT = require('../config/database.js').SALT;
 const sha256 = require('sha256');
+const { validateNickname } = require('../controller/users.js');
 
 module.exports = {
-	// Get User by UserID
+	// Get User Info by UserID
 	getUser: function (user_id) {
 		return new Promise(function (resolve, reject) {
 			connection.query(`SELECT id, user_id, nickname from users where user_id='${user_id}' LIMIT 1`, (err, rows, fields) => {
@@ -25,5 +26,38 @@ module.exports = {
 				resolve();
 			});
 		});
+	},
+	// Update User Info
+	// 	{
+	// 		"id": 1,
+	//		"user_id": "changedUserID"
+	//		"password": ""
+	//		...
+	// 	}
+	updateUser: function (user) {
+		// TODO: API 구현
+	},
+	// delete User by ID
+	deleteUser: function (user_id, password) {
+		// TODO: API 구현
+	},
+	// check password
+	validatePassword: function(user_id, password) {
+		// TODO: API 구현
+		return true;
+	},
+	// check for duplicate User ID
+	validateUserID: function(user_id) {
+		// TODO: API 구현
+		return true;
+	},
+	// check for duplicate Nickname
+	validateNickname: function(nickname) {
+		// TODO: API 구현
+		return true;
+	},
+	// update Password
+	updatePassword: function(old_password, new_password) {
+		// TODO: API 구현
 	}
 };
