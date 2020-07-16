@@ -1,12 +1,12 @@
-const users = require('../models/users');
+const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
-const jwt_config = require('../config/jwt');
+const jwt_config = require('../../config/jwt');
 
 module.exports = {
 	// GET /users/?id= - user id에 해당하는 유저 정보 반환
 	getUserInfo: function (req, res) {
 		if (req.query.id) {
-			users.getUser(req.query.id).then((user) => {
+			User.getUser(req.query.id).then((user) => {
 				if (user) {
 					res.json(user);
 				} else {
@@ -29,7 +29,7 @@ module.exports = {
 			// TODO: id 중복검사
 			// TODO: password 암호화
 			// TODO: nickname 중복검사
-			users.addUser(id, password, nickname).then((user) => {
+			User.addUser(id, password, nickname).then((user) => {
 				res.send('User created successfully.');
 			}).catch((err) => {
 				console.log(err);
@@ -69,7 +69,7 @@ module.exports = {
 		let user_id = req.body.id;
 		let password = req.body.password;
 		if (user_id != null && password != null) {
-			users.validatePassword(user_id, password).then((user) => {
+			User.validatePassword(user_id, password).then((user) => {
 				if (user) {
 					let payload = {
 						id: user.id,
