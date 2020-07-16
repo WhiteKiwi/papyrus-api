@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const jwt_config = require('../../config/jwt');
 
 module.exports = {
-	// GET /users/ - 유저 정보 반환
+	// GET /users - 유저 정보 반환
 	getUserInfo: function (req, res) {
 		User.getUser(req.user.user_id).then((user) => {
 			if (user) {
@@ -16,7 +16,7 @@ module.exports = {
 			throw err;
 		});
 	},
-	// POST /users/ - 유저 생성
+	// POST /users - 유저 생성
 	signUp: function (req, res) {
 		let id = req.body.user_id;
 		let password = req.body.password;
@@ -36,12 +36,12 @@ module.exports = {
 			res.status(400).json({ 'errorMsg': 'id, password 또는 nickname이 누락되었습니다.' });
 		}
 	},
-	// PATCH /users/ - 유저 정보 업데이트 생성
+	// PATCH /users - 유저 정보 업데이트 생성
 	updateUserInfo: function (req, res) {
 		// TODO: API 구현
 		res.send('Comming Soon');
 	},
-	// DELETE /users/ - 유저 삭제
+	// DELETE /users - 유저 삭제
 	withdrawal: function (req, res) {
 		User.deleteUser(req.user.user_id, req.body.password).then((isDeleted) => {
 			if (isDeleted) {
@@ -55,7 +55,7 @@ module.exports = {
 			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
 		});
 	},
-	// GET /users/validate-user-id
+	// GET /users/validate-user-id - User ID 중복 여부 검사
 	validateUserID: function (req, res) {
 		User.validateUserID(req.query.user_id).then((isExist) => {
 			res.json({ 'isExist': isExist });
@@ -64,7 +64,7 @@ module.exports = {
 			throw err;
 		});
 	},
-	// GET /users/validate-nickname
+	// GET /users/validate-nickname - 닉네임 중복 여부 검사
 	validateNickname: function (req, res) {
 		User.validateNickname(req.query.nickname).then((isExist) => {
 			res.json({ 'isExist': isExist });
@@ -73,12 +73,12 @@ module.exports = {
 			throw err;
 		});
 	},
-	// PATCH /users/change-password
+	// PATCH /users/change-password - Password 변경 API
 	changePassword: function (req, res) {
 		// TODO: email or phone 인증을 이용해서 API 구현
 		res.send('Comming Soon');
 	},
-	// GET /users/sign-in
+	// GET /users/sign-in - Sign In API
 	signIn: function (req, res) {
 		let user_id = req.body.user_id;
 		let password = req.body.password;
@@ -106,11 +106,12 @@ module.exports = {
 			});
 		}
 	},
-	// GET /users/sign-out
+	// GET /users/sign-out - 로그아웃
 	signOut: function (req, res) {
 		// TODO: API 구현
 		res.send('Comming Soon');
 	},
+	// GET /users/token - refresh access token
 	refresh: function (req, res) {
 		// TODO: token refresh API 구현
 		res.send('Comming Soon');
