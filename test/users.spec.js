@@ -30,6 +30,23 @@ describe('POST /users/', () => {
 				done();
 			});
 	});
+
+	it('회원가입 - 이미 존재하는 User', (done) => {
+		request(app)
+			.post('/users/')
+			.send({
+				user_id: testUser.user_id,
+				password: testUser.password,
+				nickname: testUser.nickname
+			})
+			.expect(409)
+			.end((err, res) => {
+				if (err)
+					throw err;
+
+				done();
+			});
+	});
 });
 
 describe('GET /users/validate-user-id', () => {
