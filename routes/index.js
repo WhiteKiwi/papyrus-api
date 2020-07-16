@@ -13,6 +13,7 @@ router.get('/users/validate-user-id', userController.validateUserID);
 router.get('/users/validate-nickname', userController.validateNickname);
 router.patch('/users/change-password', userController.changePassword);
 router.post('/users/sign-in', userController.signIn);
+router.post('/users/token', userController.refresh);
 router.get('/users/sign-out', userController.signOut);
 
 // TODO API

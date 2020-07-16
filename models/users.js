@@ -41,22 +41,32 @@ module.exports = {
 		// TODO: API 구현
 	},
 	// check password
-	validatePassword: function(user_id, password) {
-		// TODO: API 구현
-		return true;
+	validatePassword: function (user_id, password) {
+		return new Promise(function (resolve, reject) {
+			connection.query(`SELECT * from users where user_id='${user_id}' LIMIT 1`, (err, rows, fields) => {
+				if (err) {
+					return reject(err);
+				}
+
+				if (rows[0].password === sha256(password + SALT))
+					resolve(rows[0]);
+				else
+					resolve(null);
+			});
+		});
 	},
 	// check for duplicate User ID
-	validateUserID: function(user_id) {
+	validateUserID: function (user_id) {
 		// TODO: API 구현
 		return true;
 	},
 	// check for duplicate Nickname
-	validateNickname: function(nickname) {
+	validateNickname: function (nickname) {
 		// TODO: API 구현
 		return true;
 	},
 	// update Password
-	updatePassword: function(old_password, new_password) {
+	updatePassword: function (old_password, new_password) {
 		// TODO: API 구현
 	}
 };

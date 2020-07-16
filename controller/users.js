@@ -1,4 +1,6 @@
 const users = require('../models/users');
+const jwt = require('jsonwebtoken');
+const jwt_config = require('../config/jwt');
 
 module.exports = {
 	// GET /users/?id= - user id에 해당하는 유저 정보 반환
@@ -64,12 +66,39 @@ module.exports = {
 	},
 	// GET /users/sign-in
 	signIn: function (req, res) {
-		// TODO: API 구현
-		res.send('Comming Soon');
+		let user_id = req.body.id;
+		let password = req.body.password;
+		if (user_id != null && password != null) {
+			users.validatePassword(user_id, password).then((user) => {
+				if (user) {
+					let payload = {
+						id: user.id,
+						user_id: user.user_id,
+						nickname: user.nickname
+					};
+					let token = jwt.sign(payload, jwt_config.secret, { expiresIn: '7d' });
+
+					// TODO: refresh Token도 구현하기
+					res.json({
+						'accessToken': token,
+						'refreshToken': ''
+					});
+				} else {
+					res.status(401).json({ 'errorMsg': '로그인에 실패하였습니다. Password를 확인해주세요.' });
+				}
+			}).catch((err) => {
+				console.log(err);
+				throw err;
+			});
+		}
 	},
 	// GET /users/sign-out
 	signOut: function (req, res) {
 		// TODO: API 구현
+		res.send('Comming Soon');
+	},
+	refresh: function (req, res) {
+		// TODO: token refresh API 구현
 		res.send('Comming Soon');
 	}
 };
