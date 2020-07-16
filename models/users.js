@@ -1,7 +1,6 @@
 const connection = require('../config/database.js').connect();
 const SALT = require('../config/database.js').SALT;
 const sha256 = require('sha256');
-const { validateNickname } = require('../controller/users.js');
 
 module.exports = {
 	// Get User Info by UserID

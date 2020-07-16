@@ -19,7 +19,7 @@ module.exports = {
 		}
 	},
 	// POST /users/ - 유저 생성
-	register: function (req, res) {
+	signUp: function (req, res) {
 		let id = req.body.id;
 		let password = req.body.password;
 		let nickname = req.body.nickname;
@@ -40,26 +40,36 @@ module.exports = {
 	// PATCH /users/ - 유저 정보 업데이트 생성
 	updateUserInfo: function (req, res) {
 		// TODO: API 구현
-		res.send("Comming Soon");
+		res.send('Comming Soon');
 	},
 	// DELETE /users/ - 유저 삭제
 	withdrawal: function (req, res) {
 		// TODO: API 구현
-		res.send("Comming Soon");
+		res.send('Comming Soon');
 	},
 	// GET /users/validate-user-id
 	validateUserID: function (req, res) {
 		// TODO: API 구현
-		res.send("Comming Soon");
+		res.send('Comming Soon');
 	},
 	// GET /users/validate-nickname
 	validateNickname: function (req, res) {
 		// TODO: API 구현
-		res.send("Comming Soon");
+		res.send('Comming Soon');
 	},
 	// PATCH /users/change-password
 	changePassword: function (req, res) {
 		// TODO: email or phone 인증을 이용해서 API 구현
-		res.send("Comming Soon");
+		res.send('Comming Soon');
 	},
+	// GET /users/sign-in
+	signIn: function (req, res) {
+		// TODO: API 구현
+		res.send('Comming Soon');
+	},
+	// GET /users/sign-out
+	signOut: function (req, res) {
+		// TODO: API 구현
+		res.send('Comming Soon');
+	}
 };
