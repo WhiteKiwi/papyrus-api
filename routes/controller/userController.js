@@ -3,22 +3,18 @@ const jwt = require('jsonwebtoken');
 const jwt_config = require('../../config/jwt');
 
 module.exports = {
-	// GET /users/?id= - user id에 해당하는 유저 정보 반환
+	// GET /users/ - 유저 정보 반환
 	getUserInfo: function (req, res) {
-		if (req.query.id) {
-			User.getUser(req.query.id).then((user) => {
-				if (user) {
-					res.json(user);
-				} else {
-					res.status(404).json({ 'errorMsg': '존재하지 않는 유저입니다.' });
-				}
-			}).catch((err) => {
-				console.log(err);
-				throw err;
-			});
-		} else {
-			res.status(400).json({ 'errorMsg': 'user id가 필요합니다.' });
-		}
+		User.getUser(req.user.user_id).then((user) => {
+			if (user) {
+				res.json(user);
+			} else {
+				res.status(404).json({ 'errorMsg': '존재하지 않는 유저입니다.' });
+			}
+		}).catch((err) => {
+			console.log(err);
+			throw err;
+		});
 	},
 	// POST /users/ - 유저 생성
 	signUp: function (req, res) {
