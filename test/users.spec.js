@@ -33,7 +33,7 @@ describe('POST /users/', () => {
 });
 
 describe('GET /users/validate-user-id', () => {
-	it('ID 중복검사 - 존재', (done) => {
+	it('User ID 중복검사 - 존재 O', (done) => {
 		request(app)
 			.get(`/users/validate-user-id?user_id=${testUser.user_id}`)
 			.expect(200)
@@ -47,9 +47,39 @@ describe('GET /users/validate-user-id', () => {
 			});
 	});
 
-	it('ID 중복검사 - 존재 X', (done) => {
+	it('User ID 중복검사 - 존재 X', (done) => {
 		request(app)
 			.get(`/users/validate-user-id?user_id=${testUser.user_id + 'a'}`)
+			.expect(200)
+			.end((err, res) => {
+				if (err)
+					throw err;
+
+				res.body.isExist.should.be.equal(false);
+
+				done();
+			});
+	});
+});
+
+describe('GET /users/validate-nickname', () => {
+	it('Nickname 중복검사 - 존재 O', (done) => {
+		request(app)
+			.get(`/users/validate-nickname?nickname=${testUser.nickname}`)
+			.expect(200)
+			.end((err, res) => {
+				if (err)
+					throw err;
+
+				res.body.isExist.should.be.equal(true);
+
+				done();
+			});
+	});
+
+	it('Nickname 중복검사 - 존재 X', (done) => {
+		request(app)
+			.get(`/users/validate-nickname?nickname=${testUser.nickname + 'a'}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)

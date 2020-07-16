@@ -77,8 +77,15 @@ module.exports = {
 	},
 	// check for duplicate Nickname
 	validateNickname: function (nickname) {
-		// TODO: API 구현
-		return true;
+		return new Promise(function (resolve, reject) {
+			connection.query(`SELECT EXISTS (SELECT nickname from users where nickname='${nickname}') as isExist`, (err, rows) => {
+				if (err) {
+					return reject(err);
+				}
+				
+				resolve(rows[0].isExist == 1 ? true : false);
+			});
+		});
 	},
 	// update Password
 	updatePassword: function (old_password, new_password) {

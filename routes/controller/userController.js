@@ -60,8 +60,12 @@ module.exports = {
 	},
 	// GET /users/validate-nickname
 	validateNickname: function (req, res) {
-		// TODO: API 구현
-		res.send('Comming Soon');
+		User.validateNickname(req.query.nickname).then((isExist) => {
+			res.json({ 'isExist': isExist });
+		}).catch((err) => {
+			console.log(err);
+			throw err;
+		});
 	},
 	// PATCH /users/change-password
 	changePassword: function (req, res) {
