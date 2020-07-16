@@ -27,8 +27,10 @@ module.exports = {
 			}).catch((err) => {
 				if (err.errno == 1062)
 					res.status(409).json({ 'errorMsg': 'User ID 또는 Nickname이 중복되었습니다.' });
-				else
+				else {
+					console.log(err);
 					res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+				}
 			});
 		} else {
 			res.status(400).json({ 'errorMsg': 'id, password 또는 nickname이 누락되었습니다.' });
@@ -41,11 +43,16 @@ module.exports = {
 	},
 	// DELETE /users/ - 유저 삭제
 	withdrawal: function (req, res) {
-		User.deleteUser(req.user.user_id, req.body.password).then(() => {
-			res.send('User deleted successfully.');
+		User.deleteUser(req.user.user_id, req.body.password).then((isDeleted) => {
+			if (isDeleted) {
+				// TODO: Token 블랙리스트 구현
+				res.send('User deleted successfully.');
+			} else {
+				res.status(401).json({ 'errorMsg': 'Password가 일치하지 않습니다.' });
+			}
 		}).catch((err) => {
 			console.log(err);
-			throw err;
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
 		});
 	},
 	// GET /users/validate-user-id

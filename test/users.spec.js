@@ -149,6 +149,22 @@ describe('GET /users/', () => {
 });
 
 describe('DELETE /users/', () => {
+	it('회원탈퇴 - Incorrect Password', (done) => {
+		request(app)
+			.delete('/users/')
+			.set({ 'Authorization': `Bearer ${accessToken}` })
+			.send({
+				password: testUser.password + '2'
+			})
+			.expect(401)
+			.end((err, res) => {
+				if (err)
+					throw err;
+
+				done();
+			});
+	});
+
 	it('회원탈퇴', (done) => {
 		request(app)
 			.delete('/users/')

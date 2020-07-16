@@ -39,12 +39,12 @@ module.exports = {
 	// delete User by ID
 	deleteUser: function (user_id, password) {
 		return new Promise(function (resolve, reject) {
-			connection.query(`DELETE from users where user_id='${user_id}'`, (err, result) => {
+			connection.query(`DELETE from users where user_id='${user_id}' and password='${sha256(password + SALT)}'`, (err, rows) => {
 				if (err) {
 					return reject(err);
 				}
-				
-				resolve();
+
+				resolve(rows.affectedRows == 1 ? true : false);
 			});
 		});
 	},
