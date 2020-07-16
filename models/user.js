@@ -65,8 +65,15 @@ module.exports = {
 	},
 	// check for duplicate User ID
 	validateUserID: function (user_id) {
-		// TODO: API 구현
-		return true;
+		return new Promise(function (resolve, reject) {
+			connection.query(`SELECT EXISTS (SELECT user_id from users where user_id='${user_id}') as isExist`, (err, rows) => {
+				if (err) {
+					return reject(err);
+				}
+				
+				resolve(rows[0].isExist == 1 ? true : false);
+			});
+		});
 	},
 	// check for duplicate Nickname
 	validateNickname: function (nickname) {

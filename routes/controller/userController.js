@@ -51,8 +51,12 @@ module.exports = {
 	},
 	// GET /users/validate-user-id
 	validateUserID: function (req, res) {
-		// TODO: API 구현
-		res.send('Comming Soon');
+		User.validateUserID(req.query.user_id).then((isExist) => {
+			res.json({ 'isExist': isExist });
+		}).catch((err) => {
+			console.log(err);
+			throw err;
+		});
 	},
 	// GET /users/validate-nickname
 	validateNickname: function (req, res) {
