@@ -26,7 +26,7 @@ module.exports = {
 			// TODO: password 암호화
 			// TODO: nickname 중복검사
 			User.addUser(id, password, nickname).then(() => {
-				res.send('User created successfully.');
+				res.status(201).send('User created successfully.');
 			}).catch((err) => {
 				console.log(err);
 				throw err;
