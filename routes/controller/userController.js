@@ -18,7 +18,7 @@ module.exports = {
 	},
 	// POST /users/ - 유저 생성
 	signUp: function (req, res) {
-		let id = req.body.id;
+		let id = req.body.user_id;
 		let password = req.body.password;
 		let nickname = req.body.nickname;
 		if (id != null && password != null && nickname != null) {
@@ -66,7 +66,7 @@ module.exports = {
 	},
 	// GET /users/sign-in
 	signIn: function (req, res) {
-		let user_id = req.body.id;
+		let user_id = req.body.user_id;
 		let password = req.body.password;
 		if (user_id != null && password != null) {
 			User.validatePassword(user_id, password).then((user) => {

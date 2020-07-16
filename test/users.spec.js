@@ -18,7 +18,7 @@ describe('POST /users/', () => {
 		request(app)
 			.post('/users/')
 			.send({
-				id: testUser.user_id,
+				user_id: testUser.user_id,
 				password: testUser.password,
 				nickname: testUser.nickname
 			})
@@ -37,7 +37,7 @@ describe('POST /users/sign-in', () => {
 		request(app)
 			.post('/users/sign-in')
 			.send({
-				id: testUser.user_id,
+				user_id: testUser.user_id,
 				password: testUser.password
 			})
 			.expect(200)
