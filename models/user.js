@@ -38,7 +38,15 @@ module.exports = {
 	},
 	// delete User by ID
 	deleteUser: function (user_id, password) {
-		// TODO: API 구현
+		return new Promise(function (resolve, reject) {
+			connection.query(`DELETE from users where user_id='${user_id}'`, (err, result) => {
+				if (err) {
+					return reject(err);
+				}
+				
+				resolve();
+			});
+		});
 	},
 	// check password
 	validatePassword: function (user_id, password) {

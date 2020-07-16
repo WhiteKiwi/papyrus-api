@@ -25,7 +25,7 @@ module.exports = {
 			// TODO: id 중복검사
 			// TODO: password 암호화
 			// TODO: nickname 중복검사
-			User.addUser(id, password, nickname).then((user) => {
+			User.addUser(id, password, nickname).then(() => {
 				res.send('User created successfully.');
 			}).catch((err) => {
 				console.log(err);
@@ -42,8 +42,12 @@ module.exports = {
 	},
 	// DELETE /users/ - 유저 삭제
 	withdrawal: function (req, res) {
-		// TODO: API 구현
-		res.send('Comming Soon');
+		User.deleteUser(req.user.user_id, req.body.password).then(() => {
+			res.send('User deleted successfully.');
+		}).catch((err) => {
+			console.log(err);
+			throw err;
+		});
 	},
 	// GET /users/validate-user-id
 	validateUserID: function (req, res) {
