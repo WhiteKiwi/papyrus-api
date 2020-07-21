@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
+
+const logger = require('morgan');
 const Sentry = require('@sentry/node');
 Sentry.init({ dsn: process.env.SENTRY_DSN });
 
@@ -13,6 +16,11 @@ const authChecker = require('./routes/middlewares/authChecker');
 app.set('port', process.env.PORT || 3000);
 
 app.use(Sentry.Handlers.requestHandler());
+
+if (process.env.NODE_ENV == 'production')
+	app.use(logger('short'));
+else if (process.env.NODE_ENV == 'develop' || process.env.NODE_ENV == 'local')
+	app.use(logger(':method :url - :response-time ms'));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
