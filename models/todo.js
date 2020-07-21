@@ -23,9 +23,12 @@ module.exports = {
 				if (err) {
 					return reject(err);
 				}
-
-				rows[0].is_achieved = rows[0].is_achieved ? true : false;
-				resolve(rows[0]);
+				if (rows[0]) {
+					rows[0].is_achieved = rows[0].is_achieved ? true : false;
+					resolve(rows[0]);
+				} else {
+					resolve();
+				}
 			});
 		});
 	},
