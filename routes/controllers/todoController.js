@@ -40,8 +40,18 @@ module.exports = {
 	},
 	// PATCH /todos/:uuid - 정보 Update
 	updateTodo: function (req, res) {
-		// TODO: API 구현
-		res.send('Comming Soon');
+		let todo = req.body;
+		if (Object.keys(todo).length != 0) {
+			todo.uuid = req.params.uuid;
+			TODO.updateTodo(req.user.uuid, todo).then(() => {
+				res.status(200).send('Todo updated successfully.');
+			}).catch((err) => {
+				console.log(err);
+				res.status(err.httpStatusCode).json({ 'errorMsg': err.message });
+			});
+		} else {
+			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+		}
 	},
 	// DELETE /todos/:uuid - Todo 삭제
 	deleteTodo: function (req, res) {
