@@ -60,7 +60,13 @@ module.exports = {
 					if (err) {
 						return reject(err);
 					}
-					resolve();
+					if (rows.affectedRows > 0) {
+						resolve();
+					} else {
+						let err = new Error('404 Not Found');
+						err.httpStatusCode = 404;
+						return reject(err);
+					}
 				});
 			} else {
 				let err = new Error('요청한 정보가 잘못되었습니다.');
