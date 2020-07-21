@@ -29,7 +29,7 @@ module.exports = {
 		let title = req.body.title;
 		if (title != '') {
 			TODO.addTodo(req.user.uuid, title).then(() => {
-				res.status(201).send('Todo created successfully.');
+				res.status(201).json({});
 			}).catch((err) => {
 				console.log(err);
 				res.status(500).json({ 'errorMsg': 'Internal Server Error' });
@@ -44,7 +44,7 @@ module.exports = {
 		if (Object.keys(todo).length != 0) {
 			todo.uuid = req.params.uuid;
 			TODO.updateTodo(req.user.uuid, todo).then(() => {
-				res.status(200).send('Todo updated successfully.');
+				res.status(204).json({});
 			}).catch((err) => {
 				// TODO: add custom error
 				if (err.httpStatusCode) {
@@ -62,7 +62,7 @@ module.exports = {
 	deleteTodo: function (req, res) {
 		TODO.deleteTodo(req.user.uuid, req.params.uuid).then(() => {
 			// TODO: Token 거부리스트 구현
-			res.send('Todo deleted successfully.');
+			res.status(204).json({});
 		}).catch((err) => {
 			if (err.httpStatusCode) {
 				res.status(err.httpStatusCode).json({ 'errorMsg': err.message });

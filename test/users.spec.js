@@ -172,7 +172,7 @@ describe('DELETE /users/', () => {
 			.send({
 				password: testUser.password
 			})
-			.expect(200)
+			.expect(204)
 			.end((err, res) => {
 				if (err)
 					throw err;

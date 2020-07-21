@@ -23,7 +23,7 @@ module.exports = {
 		let nickname = req.body.nickname;
 		if (user_id != null && password != null && nickname != null) {
 			User.addUser(user_id, password, nickname).then(() => {
-				res.status(201).send('User created successfully.');
+				res.status(201).json({});
 			}).catch((err) => {
 				if (err.errno == 1062)
 					res.status(409).json({ 'errorMsg': 'User ID 또는 Nickname이 중복되었습니다.' });
@@ -46,7 +46,7 @@ module.exports = {
 		User.deleteUser(req.user.user_id, req.body.password).then((isDeleted) => {
 			if (isDeleted) {
 				// TODO: Token 거부리스트 구현
-				res.send('User deleted successfully.');
+				res.status(204).json({});
 			} else {
 				res.status(401).json({ 'errorMsg': 'Password가 일치하지 않습니다.' });
 			}

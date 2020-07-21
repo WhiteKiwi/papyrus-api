@@ -296,7 +296,7 @@ describe('PATCH /todos/:uuid', () => {
 			.send({
 				title: 'test1_edited'
 			})
-			.expect(200)
+			.expect(204)
 			.end((err, res) => {
 				if (err)
 					throw err;
@@ -312,7 +312,7 @@ describe('PATCH /todos/:uuid', () => {
 			.send({
 				is_achieved: true
 			})
-			.expect(200)
+			.expect(204)
 			.end((err, res) => {
 				if (err)
 					throw err;
@@ -329,7 +329,7 @@ describe('PATCH /todos/:uuid', () => {
 				title: 'test3_edited',
 				is_achieved: true
 			})
-			.expect(200)
+			.expect(204)
 			.end((err, res) => {
 				if (err)
 					throw err;
@@ -409,7 +409,7 @@ describe('DELETE /todos/:uuid', () => {
 		request(app)
 			.delete(`/todos/${testTodos['test1'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
-			.expect(200)
+			.expect(204)
 			.end((err, res) => {
 				if (err)
 					throw err;
@@ -453,7 +453,7 @@ describe('테스트 계정 삭제', () => {
 			.send({
 				password: testUser[0].password
 			})
-			.expect(200)
+			.expect(204)
 			.end((err, res) => {
 				if (err)
 					throw err;
@@ -469,7 +469,7 @@ describe('테스트 계정 삭제', () => {
 			.send({
 				password: testUser[1].password
 			})
-			.expect(200)
+			.expect(204)
 			.end((err, res) => {
 				if (err)
 					throw err;
