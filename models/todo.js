@@ -4,7 +4,7 @@ module.exports = {
 	// Get All Todos
 	getTodos: function (user_uuid) {
 		return new Promise(function (resolve, reject) {
-			connection.query(`SELECT todos.uuid, todos.title, todos.is_achieved from todos left join users on users.uuid='${user_uuid}'`, (err, rows, fields) => {
+			connection.query(`SELECT todos.uuid, todos.title, todos.is_achieved from todos where user_uuid='${user_uuid}'`, (err, rows, fields) => {
 				if (err) {
 					return reject(err);
 				}
@@ -19,7 +19,7 @@ module.exports = {
 	// Get Todo Info
 	getTodo: function (user_uuid, todo_uuid) {
 		return new Promise(function (resolve, reject) {
-			connection.query(`SELECT todos.* from todos left join users on users.uuid='${user_uuid}' where todos.uuid='${todo_uuid}'`, (err, rows, fields) => {
+			connection.query(`SELECT todos.* from todos where user_uuid='${user_uuid}' and uuid='${todo_uuid}'`, (err, rows, fields) => {
 				if (err) {
 					return reject(err);
 				}
