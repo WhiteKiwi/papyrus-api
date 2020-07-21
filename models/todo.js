@@ -1,4 +1,4 @@
-const connection = require('../config/database.js').connect();
+const connection = require('../configs/database.js').connect();
 
 module.exports = {
 	// Get All Todos

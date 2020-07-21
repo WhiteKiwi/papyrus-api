@@ -1,6 +1,6 @@
 const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
-const jwt_config = require('../../config/jwt');
+const jwt_config = require('../../configs/jwt');
 
 module.exports = {
 	// GET /users - 유저 정보 반환

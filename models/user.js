@@ -1,5 +1,5 @@
-const connection = require('../config/database.js').connect();
-const SALT = require('../config/database.js').SALT;
+const connection = require('../configs/database.js').connect();
+const SALT = require('../configs/database.js').SALT;
 const sha256 = require('sha256');
 
 module.exports = {
