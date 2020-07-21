@@ -45,7 +45,7 @@ module.exports = {
 	withdrawal: function (req, res) {
 		User.deleteUser(req.user.user_id, req.body.password).then((isDeleted) => {
 			if (isDeleted) {
-				// TODO: Token 블랙리스트 구현
+				// TODO: Token 거부리스트 구현
 				res.send('User deleted successfully.');
 			} else {
 				res.status(401).json({ 'errorMsg': 'Password가 일치하지 않습니다.' });

@@ -46,7 +46,7 @@ module.exports = {
 	// DELETE /todos/:uuid - Todo 삭제
 	deleteTodo: function (req, res) {
 		TODO.deleteTodo(req.user.uuid, req.params.uuid).then(() => {
-			// TODO: Token 블랙리스트 구현
+			// TODO: Token 거부리스트 구현
 			res.send('Todo deleted successfully.');
 		}).catch((err) => {
 			console.log(err);
