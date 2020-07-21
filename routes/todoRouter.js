@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const todoController = require('./controllers/todoController');
 
-// TODO API
+// Todo API
 router.get('/', todoController.getTodos);
 router.get('/:uuid', todoController.getTodoInfo);
 router.post('/', todoController.addTodo);

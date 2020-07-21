@@ -1,33 +1,35 @@
 const connection = require('../configs/database.js').connect();
+const CustomError = require('../utility/CustomError.js');
 
 module.exports = {
 	// Get All Todos
 	getTodos: function (user_uuid) {
 		return new Promise(function (resolve, reject) {
-			connection.query(`SELECT todos.uuid, todos.title, todos.is_achieved from todos where user_uuid='${user_uuid}'`, (err, rows, fields) => {
+			connection.query(`SELECT todos.uuid, todos.title, todos.is_achieved from todos where user_uuid='${user_uuid}'`, (err, results) => {
 				if (err) {
 					return reject(err);
 				}
 
-				rows.forEach(function(r) {
+				results.forEach(function(r) {
 					r.is_achieved = r.is_achieved ? true : false;
 				});
-				resolve(rows);
+				resolve(results);
 			});
 		});
 	},
 	// Get Todo Info
 	getTodo: function (user_uuid, todo_uuid) {
 		return new Promise(function (resolve, reject) {
-			connection.query(`SELECT todos.* from todos where user_uuid='${user_uuid}' and uuid='${todo_uuid}'`, (err, rows, fields) => {
+			connection.query(`SELECT todos.* from todos where user_uuid='${user_uuid}' and uuid='${todo_uuid}'`, (err, results) => {
 				if (err) {
 					return reject(err);
 				}
-				if (rows[0]) {
-					rows[0].is_achieved = rows[0].is_achieved ? true : false;
-					resolve(rows[0]);
+				
+				if (results.length > 0) {
+					results[0].is_achieved = results[0].is_achieved ? true : false;
+					resolve(results[0]);
 				} else {
-					resolve();
+					return reject(new CustomError('404 Not Found', 404));
 				}
 			});
 		});
@@ -35,7 +37,7 @@ module.exports = {
 	// Add Todo
 	addTodo: function (user_uuid, title) {
 		return new Promise(function (resolve, reject) {
-			connection.query(`INSERT INTO todos(title, user_uuid) VALUES('${title}', '${user_uuid}')`, (err, rows, fields) => {
+			connection.query(`INSERT INTO todos(title, user_uuid) VALUES('${title}', '${user_uuid}')`, (err, results) => {
 				if (err) {
 					return reject(err);
 				}
@@ -56,39 +58,33 @@ module.exports = {
 			}
 
 			if (sub_query) {
-				connection.query(`UPDATE todos SET ${sub_query.substring(0, sub_query.length-2)} where user_uuid='${user_uuid}' AND uuid='${todo.uuid}'`, (err, rows, fields) => {
+				connection.query(`UPDATE todos SET ${sub_query.substring(0, sub_query.length-2)} where user_uuid='${user_uuid}' AND uuid='${todo.uuid}'`, (err, results) => {
 					if (err) {
 						return reject(err);
 					}
-					if (rows.affectedRows > 0) {
+					if (results.affectedRows > 0) {
 						resolve();
 					} else {
-						let err = new Error('404 Not Found');
-						err.httpStatusCode = 404;
-						return reject(err);
+						return reject(new CustomError('404 Not Found', 404));
 					}
 				});
 			} else {
-				let err = new Error('요청한 정보가 잘못되었습니다.');
-				err.httpStatusCode = 400;
-				return reject(err);
+				return reject(new CustomError('요청한 정보가 잘못되었습니다.', 400));
 			}
 		});
 	},
 	// delete Todo by UUID
 	deleteTodo: function (user_uuid, todo_uuid) {
 		return new Promise(function (resolve, reject) {
-			connection.query(`DELETE from todos where user_uuid='${user_uuid}' and uuid='${todo_uuid}'`, (err, rows) => {
+			connection.query(`DELETE from todos where user_uuid='${user_uuid}' and uuid='${todo_uuid}'`, (err, results) => {
 				if (err) {
 					return reject(err);
 				}
 
-				if (rows.affectedRows > 0) {
+				if (results.affectedRows > 0) {
 					resolve();
 				} else {
-					let err = new Error('404 Not Found');
-					err.httpStatusCode = 404;
-					return reject(err);
+					return reject(new CustomError('404 Not Found', 404));
 				}
 			});
 		});
