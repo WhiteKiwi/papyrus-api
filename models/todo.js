@@ -8,6 +8,10 @@ module.exports = {
 				if (err) {
 					return reject(err);
 				}
+
+				rows.forEach(function(r) {
+					r.is_achieved = r.is_achieved ? true : false;
+				});
 				resolve(rows);
 			});
 		});
@@ -19,6 +23,8 @@ module.exports = {
 				if (err) {
 					return reject(err);
 				}
+
+				rows[0].is_achieved = rows[0].is_achieved ? true : false;
 				resolve(rows[0]);
 			});
 		});
