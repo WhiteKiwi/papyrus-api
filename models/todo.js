@@ -39,5 +39,17 @@ module.exports = {
 				resolve();
 			});
 		});
+	},
+	// delete Todo by UUID
+	deleteTodo: function (user_uuid, todo_uuid) {
+		return new Promise(function (resolve, reject) {
+			connection.query(`DELETE from todos where user_uuid='${user_uuid}' and uuid='${todo_uuid}'`, (err, rows) => {
+				if (err) {
+					return reject(err);
+				}
+
+				resolve();
+			});
+		});
 	}
 };

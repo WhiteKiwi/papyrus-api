@@ -38,14 +38,19 @@ module.exports = {
 			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
 		}
 	},
-	// PATCH /todos - 정보 Update
+	// PATCH /todos/:uuid - 정보 Update
 	updateTodo: function (req, res) {
 		// TODO: API 구현
 		res.send('Comming Soon');
 	},
-	// DELETE /todos - Todo 삭제
+	// DELETE /todos/:uuid - Todo 삭제
 	deleteTodo: function (req, res) {
-		// TODO: API 구현
-		res.send('Comming Soon');
+		TODO.deleteTodo(req.user.uuid, req.params.uuid).then(() => {
+			// TODO: Token 블랙리스트 구현
+			res.send('Todo deleted successfully.');
+		}).catch((err) => {
+			console.log(err);
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+		});
 	}
 };
