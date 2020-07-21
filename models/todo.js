@@ -44,13 +44,13 @@ module.exports = {
 	updateTodo: function (user_uuid, todo) {
 		return new Promise(function (resolve, reject) {
 			let sub_query='';
-			Object.keys(todo).forEach(function (key) {
+			for(let key in todo) {
 				if (key == 'title') {
 					sub_query += `title='${todo[key]}', `;
 				} else if (key == 'is_achieved') {
 					sub_query += `is_achieved='${todo[key] == true ? 1 : 0}', `;
 				}
-			});
+			}
 
 			if (sub_query) {
 				connection.query(`UPDATE todos SET ${sub_query.substring(0, sub_query.length-2)} where user_uuid='${user_uuid}' AND uuid='${todo.uuid}'`, (err, rows, fields) => {
