@@ -13,8 +13,16 @@ module.exports = {
 	},
 	// GET /todos/:uuid - 상세정보 반환
 	getTodoInfo: function (req, res) {
-		// TODO: API 구현
-		res.send('Comming Soon');
+		TODO.getTodo(req.user, req.params.uuid).then((todo) => {
+			if (todo) {
+				res.json(todo);
+			} else {
+				res.status(404).json({ 'errorMsg': '존재하지 않는 Todo 입니다.' });
+			}
+		}).catch((err) => { 
+			console.log(err);
+			throw err; 
+		});
 	},
 	// POST /todos - Todo 추가
 	addTodo: function (req, res) {
