@@ -46,8 +46,13 @@ module.exports = {
 			TODO.updateTodo(req.user.uuid, todo).then(() => {
 				res.status(200).send('Todo updated successfully.');
 			}).catch((err) => {
-				console.log(err);
-				res.status(err.httpStatusCode).json({ 'errorMsg': err.message });
+				// TODO: add custom error
+				if (err.httpStatusCode) {
+					res.status(err.httpStatusCode).json({ 'errorMsg': err.message });
+				} else {
+					console.log(err);
+					res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+				}
 			});
 		} else {
 			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
@@ -59,8 +64,12 @@ module.exports = {
 			// TODO: Token 거부리스트 구현
 			res.send('Todo deleted successfully.');
 		}).catch((err) => {
-			console.log(err);
-			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+			if (err.httpStatusCode) {
+				res.status(err.httpStatusCode).json({ 'errorMsg': err.message });
+			} else {
+				console.log(err);
+				res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+			}
 		});
 	}
 };

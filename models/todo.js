@@ -83,7 +83,13 @@ module.exports = {
 					return reject(err);
 				}
 
-				resolve();
+				if (rows.affectedRows > 0) {
+					resolve();
+				} else {
+					let err = new Error('404 Not Found');
+					err.httpStatusCode = 404;
+					return reject(err);
+				}
 			});
 		});
 	}
