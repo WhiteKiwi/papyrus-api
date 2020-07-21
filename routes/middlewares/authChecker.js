@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
 		let user = jwt.verify(token, jwt_config.secret);
 		if (user) {
 			req.user = {
-				id: user.id,
+				uuid: user.uuid,
 				user_id: user.user_id,
 				nickname: user.nickname
 			};

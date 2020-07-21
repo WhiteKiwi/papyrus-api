@@ -18,11 +18,11 @@ module.exports = {
 	},
 	// POST /users - 유저 생성
 	signUp: function (req, res) {
-		let id = req.body.user_id;
+		let user_id = req.body.user_id;
 		let password = req.body.password;
 		let nickname = req.body.nickname;
-		if (id != null && password != null && nickname != null) {
-			User.addUser(id, password, nickname).then(() => {
+		if (user_id != null && password != null && nickname != null) {
+			User.addUser(user_id, password, nickname).then(() => {
 				res.status(201).send('User created successfully.');
 			}).catch((err) => {
 				if (err.errno == 1062)
@@ -33,7 +33,7 @@ module.exports = {
 				}
 			});
 		} else {
-			res.status(400).json({ 'errorMsg': 'id, password 또는 nickname이 누락되었습니다.' });
+			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
 		}
 	},
 	// PATCH /users - 유저 정보 업데이트 생성
@@ -86,7 +86,7 @@ module.exports = {
 			User.validatePassword(user_id, password).then((user) => {
 				if (user) {
 					let payload = {
-						id: user.id,
+						uuid: user.uuid,
 						user_id: user.user_id,
 						nickname: user.nickname
 					};

@@ -6,7 +6,7 @@ module.exports = {
 	// Get User Info by UserID
 	getUser: function (user_id) {
 		return new Promise(function (resolve, reject) {
-			connection.query(`SELECT id, user_id, nickname from users where user_id='${user_id}' LIMIT 1`, (err, rows, fields) => {
+			connection.query(`SELECT uuid, user_id, nickname from users where user_id='${user_id}' LIMIT 1`, (err, rows, fields) => {
 				if (err) {
 					return reject(err);
 				}
@@ -28,7 +28,7 @@ module.exports = {
 	},
 	// Update User Info
 	// 	{
-	// 		"id": 1,
+	// 		"uuid": "e3990bde-cb59-11ea-9d60-560002b4c70f",
 	//		"user_id": "changedUserID"
 	//		"password": ""
 	//		...
