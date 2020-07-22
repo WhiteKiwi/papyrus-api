@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
 		let user = jwt.verify(token, jwt_config.secret);
 		if (user) {
 			req.user = {
-				uuid: user.uuid,
+				uuid: user.uuid,	
 				user_id: user.user_id,
 				nickname: user.nickname
 			};
@@ -18,6 +18,7 @@ module.exports = (req, res, next) => {
 			res.status(401).json({ 'errorMsg': 'Authentication error' });
 		}
 	} else {
+		// TODO: Redirect
 		res.status(401).json({ 'errorMsg': 'request\'s Authentication header is empty' });
 	}
 };

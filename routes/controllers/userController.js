@@ -12,6 +12,7 @@ module.exports = {
 				res.status(err.httpStatusCode).json({ 'errorMsg': err.message });
 			} else {
 				console.log(err);
+				// TODO: Error Msg 등 constants 통일하기
 				res.status(500).json({ 'errorMsg': 'Internal Server Error' });
 			}
 		});
@@ -43,6 +44,7 @@ module.exports = {
 	},
 	// DELETE /users - 유저 삭제
 	withdrawal: function (req, res) {
+		// TODO: 30일 이후 자동삭제 구현
 		User.deleteUser(req.user.user_id, req.body.password).then((isDeleted) => {
 			// TODO: Token 거부리스트 구현
 			res.status(204).json({});
@@ -92,6 +94,7 @@ module.exports = {
 				let token = jwt.sign(payload, jwt_config.secret, { expiresIn: '7d' });
 
 				// TODO: refresh Token도 구현하기
+				// TODO: Mongo DB에 Session 저장 및 검증
 				res.json({
 					'accessToken': token,
 					'refreshToken': ''
