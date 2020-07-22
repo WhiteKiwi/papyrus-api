@@ -9,12 +9,13 @@ describe('GET /', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					// result Text must be 'Hello, world!'
+					res.text.should.be.equal('Hello, world!');
 
-				// result Text must be 'Hello, world!'
-				res.text.should.be.equal('Hello, world!');
-
-				done();
+					done();
+				}
 			});
 	});
 });

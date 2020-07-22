@@ -43,9 +43,9 @@ describe('테스트 계정 생성 및 로그인', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -60,9 +60,9 @@ describe('테스트 계정 생성 및 로그인', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -76,12 +76,13 @@ describe('테스트 계정 생성 및 로그인', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					accessToken[0] = res.body.accessToken;
+					// refreshToken = res.body.refreshToken;
 
-				accessToken[0] = res.body.accessToken;
-				// refreshToken = res.body.refreshToken;
-
-				done();
+					done();
+				}
 			});
 	});
 
@@ -95,12 +96,13 @@ describe('테스트 계정 생성 및 로그인', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					accessToken[1] = res.body.accessToken;
+					// refreshToken = res.body.refreshToken;
 
-				accessToken[1] = res.body.accessToken;
-				// refreshToken = res.body.refreshToken;
-
-				done();
+					done();
+				}
 			});
 	});
 
@@ -111,11 +113,12 @@ describe('테스트 계정 생성 및 로그인', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					testUser[0].uuid = res.body.uuid;
 
-				testUser[0].uuid = res.body.uuid;
-
-				done();
+					done();
+				}
 			});
 	});
 
@@ -126,11 +129,12 @@ describe('테스트 계정 생성 및 로그인', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					testUser[1].uuid = res.body.uuid;
 
-				testUser[1].uuid = res.body.uuid;
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -147,9 +151,9 @@ describe('POST /todos', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -163,9 +167,9 @@ describe('POST /todos', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -179,9 +183,9 @@ describe('POST /todos', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -194,17 +198,18 @@ describe('GET /todos', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.length.should.be.equal(3);
 
-				res.body.length.should.be.equal(3);
+					res.body.forEach(function (todo) {
+						testTodos[todo.title].is_achieved.should.be.equal(todo.is_achieved);
+						testTodos[todo.title].uuid = todo.uuid;
+						testTodos[todo.title].user_uuid = testUser[0].uuid;
+					});
 
-				res.body.forEach(function (todo) {
-					testTodos[todo.title].is_achieved.should.be.equal(todo.is_achieved);
-					testTodos[todo.title].uuid = todo.uuid;
-					testTodos[todo.title].user_uuid = testUser[0].uuid;
-				});
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -217,13 +222,14 @@ describe('GET /todos/:uuid', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					for (let key in res.body) {
+						res.body[key].should.be.equal(testTodos['test1'][key]);
+					}
 
-				for (let key in res.body) {
-					res.body[key].should.be.equal(testTodos['test1'][key]);
+					done();
 				}
-
-				done();
 			});
 	});
 
@@ -234,13 +240,14 @@ describe('GET /todos/:uuid', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					for (let key in res.body) {
+						res.body[key].should.be.equal(testTodos['test2'][key]);
+					}
 
-				for (let key in res.body) {
-					res.body[key].should.be.equal(testTodos['test2'][key]);
+					done();
 				}
-
-				done();
 			});
 	});
 
@@ -251,13 +258,14 @@ describe('GET /todos/:uuid', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					for (let key in res.body) {
+						res.body[key].should.be.equal(testTodos['test3'][key]);
+					}
 
-				for (let key in res.body) {
-					res.body[key].should.be.equal(testTodos['test3'][key]);
+					done();
 				}
-
-				done();
 			});
 	});
 
@@ -268,9 +276,9 @@ describe('GET /todos/:uuid', () => {
 			.expect(404)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -281,9 +289,9 @@ describe('GET /todos/:uuid', () => {
 			.expect(404)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -299,9 +307,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -315,9 +323,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -332,9 +340,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -346,9 +354,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(400)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -363,9 +371,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(400)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -380,9 +388,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(404)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -397,9 +405,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(404)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -412,9 +420,9 @@ describe('DELETE /todos/:uuid', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -425,9 +433,9 @@ describe('DELETE /todos/:uuid', () => {
 			.expect(404)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -438,9 +446,9 @@ describe('DELETE /todos/:uuid', () => {
 			.expect(404)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -456,9 +464,9 @@ describe('테스트 계정 삭제', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -472,9 +480,9 @@ describe('테스트 계정 삭제', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });

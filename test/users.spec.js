@@ -25,9 +25,9 @@ describe('POST /users/', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -42,9 +42,9 @@ describe('POST /users/', () => {
 			.expect(409)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -56,11 +56,12 @@ describe('GET /users/validate-user-id', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.isExist.should.be.equal(true);
 
-				res.body.isExist.should.be.equal(true);
-
-				done();
+					done();
+				}
 			});
 	});
 
@@ -70,11 +71,12 @@ describe('GET /users/validate-user-id', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.isExist.should.be.equal(false);
 
-				res.body.isExist.should.be.equal(false);
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -86,11 +88,12 @@ describe('GET /users/validate-nickname', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.isExist.should.be.equal(true);
 
-				res.body.isExist.should.be.equal(true);
-
-				done();
+					done();
+				}
 			});
 	});
 
@@ -100,11 +103,12 @@ describe('GET /users/validate-nickname', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.isExist.should.be.equal(false);
 
-				res.body.isExist.should.be.equal(false);
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -120,12 +124,13 @@ describe('POST /users/sign-in', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					accessToken = res.body.accessToken;
+					// refreshToken = res.body.refreshToken;
 
-				accessToken = res.body.accessToken;
-				// refreshToken = res.body.refreshToken;
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -138,12 +143,13 @@ describe('GET /users/', () => {
 			.set({ 'Authorization': `Bearer ${accessToken}` })
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.user_id.should.be.equal(testUser.user_id);
+					res.body.nickname.should.be.equal(testUser.nickname);
 
-				res.body.user_id.should.be.equal(testUser.user_id);
-				res.body.nickname.should.be.equal(testUser.nickname);
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -159,9 +165,9 @@ describe('DELETE /users/', () => {
 			.expect(401)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -175,9 +181,9 @@ describe('DELETE /users/', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });

@@ -63,7 +63,7 @@ module.exports = {
 			res.json({ 'isExist': isExist });
 		}).catch((err) => {
 			console.log(err);
-			throw err;
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
 		});
 	},
 	// GET /users/validate-nickname - 닉네임 중복 여부 검사
@@ -72,7 +72,7 @@ module.exports = {
 			res.json({ 'isExist': isExist });
 		}).catch((err) => {
 			console.log(err);
-			throw err;
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
 		});
 	},
 	// PATCH /users/change-password - Password 변경 API

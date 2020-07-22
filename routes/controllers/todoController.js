@@ -8,7 +8,7 @@ module.exports = {
 			res.json(rows);
 		}).catch((err) => { 
 			console.log(err);
-			throw err; 
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
 		});
 	},
 	// GET /todos/:uuid - 상세정보 반환
