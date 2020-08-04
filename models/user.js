@@ -68,7 +68,9 @@ module.exports = {
 					return reject(err);
 				}
 
-				if (results[0].password === sha256(password + SALT))
+				if (results[0] == null) {
+					return reject(new CustomError('401 Not Found User', 401));
+				} if (results[0].password === sha256(password + SALT))
 					resolve(results[0]);
 				else
 					return reject(new CustomError('401 Incorrect Password', 401));
