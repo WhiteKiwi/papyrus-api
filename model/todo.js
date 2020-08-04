@@ -1,4 +1,4 @@
-const connection = require('../configs/database.js').connect();
+const connection = require('../config/database.js').connect();
 const CustomError = require('../utility/CustomError.js');
 
 // TODO: SQL Injection 방지

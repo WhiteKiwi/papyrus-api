@@ -1,4 +1,4 @@
-const Todo = require('../../models/todo');
+const Todo = require('../../model/todo');
 
 module.exports = {
 	// GET /todos - 유저의 Todo 리스트 반환

@@ -1,17 +1,17 @@
 const express = require('express');
 const app = express();
-const ENV = require('./configs/index');
+const ENV = require('./config/index');
 
 const logger = require('morgan');
 const Sentry = require('@sentry/node');
 Sentry.init({ dsn: ENV.SENTRY_DSN });
 
-const indexRouter = require('./routes/indexRouter');
-const authRouter = require('./routes/authRouter');
-const userRouter = require('./routes/userRouter');
-const todoRouter = require('./routes/todoRouter');
+const indexRouter = require('./route/indexRouter');
+const authRouter = require('./route/authRouter');
+const userRouter = require('./route/userRouter');
+const todoRouter = require('./route/todoRouter');
 
-const authChecker = require('./routes/middlewares/authChecker');
+const authChecker = require('./route/middleware/authChecker');
 
 app.set('port', ENV.PORT);
 
