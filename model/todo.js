@@ -2,16 +2,16 @@ const { connectionPool } = require('../config/database.js');
 
 // TODO: SQL Injection 방지
 module.exports = {
-	readTodos: async (user_uuid) => {
+	readTodos: async (userUUID) => {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
-			let query = 'SELECT uuid, title, is_achieved from todos where user_uuid=?';
-			let values = [user_uuid];
+			let query = 'SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=?';
+			let values = [userUUID];
 			const [rows] = await connection.query(query, values);
 
 			rows.forEach((row) => {
-				row.is_achieved = row.is_achieved ? true : false;
+				row.isAchieved = row.isAchieved ? true : false;
 			});
 
 			return rows;
@@ -25,17 +25,16 @@ module.exports = {
 
 		return null;
 	},
-	readTodo: async (user_uuid, todo_uuid) => {
+	readTodo: async (userUUID, todoUUID) => {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
-			let query = 'SELECT * from todos where user_uuid=? and uuid=?';
-			let values = [user_uuid, todo_uuid];
+			let query = 'SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=? and uuid=?';
+			let values = [userUUID, todoUUID];
 			const [rows] = await connection.query(query, values);
 
-			if (rows[0]) {
-				rows[0].is_achieved = rows[0].is_achieved ? true : false;
-			}
+			if (rows[0])
+				rows[0].isAchieved = rows[0].isAchieved ? true : false;
 
 			return rows[0];
 		} catch (err) {
@@ -48,12 +47,12 @@ module.exports = {
 
 		return null;
 	},
-	createTodo: async (user_uuid, title) => {
+	createTodo: async (userUUID, title) => {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
 			let query = 'INSERT INTO todos(title, user_uuid) VALUES(?, ?)';
-			let values = [title, user_uuid];
+			let values = [title, userUUID];
 			const [results] = await connection.query(query, values);
 
 			return results.affectedRows > 0 ? true : false;
@@ -67,23 +66,23 @@ module.exports = {
 
 		return null;
 	},
-	updateTodo: async (user_uuid, todo) => {
+	updateTodo: async (userUUID, todo) => {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
-			let columns=[];
+			let subQuery=[];
 			for(let key in todo) {
 				if (key == 'title') {
-					columns.push(`title='${todo[key]}'`);
-				} else if (key == 'is_achieved') {
-					columns.push(`is_achieved='${todo[key] == true ? 1 : 0}'`);
+					subQuery.push(`title='${todo[key]}'`);
+				} else if (key == 'isAchieved') {
+					subQuery.push(`is_achieved='${todo[key] == true ? 1 : 0}'`);
 				}
 			}
-			if (columns.length == 0)
+			if (subQuery.length == 0)
 				return false;
 
-			let query = `UPDATE todos SET ${columns.join(', ')} where user_uuid=? AND uuid=?`;
-			let values = [user_uuid, todo.uuid];
+			let query = `UPDATE todos SET ${subQuery.join(', ')} where user_uuid=? AND uuid=?`;
+			let values = [userUUID, todo.uuid];
 			const [results] = await connection.query(query, values);
 
 			return results.affectedRows > 0 ? true : false;
@@ -97,12 +96,12 @@ module.exports = {
 
 		return null;
 	},
-	deleteTodo: async (user_uuid, todo_uuid) => {
+	deleteTodo: async (userUUID, todoUUID) => {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
 			const query = 'DELETE from todos where user_uuid=? and uuid=?';
-			const values = [user_uuid, todo_uuid];
+			const values = [userUUID, todoUUID];
 			const [results] = await connection.query(query, values);
 
 			return results.affectedRows > 0 ? true : false;

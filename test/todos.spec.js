@@ -5,12 +5,12 @@ require('chai').should();
 let accessToken = ['', ''];
 const testUser = [
 	{
-		'user_id': 'testUserQwerQwer',
+		'userID': 'testUserQwerQwer',
 		'password': 'testPassword',
 		'nickname': 'TestKiwi'
 	},
 	{
-		'user_id': 'testUserQwerQwer2',
+		'userID': 'testUserQwerQwer2',
 		'password': 'testPassword',
 		'nickname': 'TestKiwi2'
 	}
@@ -19,15 +19,15 @@ const testUser = [
 const testTodos = {
 	test1: {
 		'title': 'test1',
-		'is_achieved': false
+		'isAchieved': false
 	},
 	test2: {
 		'title': 'test2',
-		'is_achieved': false
+		'isAchieved': false
 	},
 	test3: {
 		'title': 'test3',
-		'is_achieved': false
+		'isAchieved': false
 	}
 };
 
@@ -36,7 +36,7 @@ describe('테스트 계정 생성 및 로그인', () => {
 		request(app)
 			.post('/users/')
 			.send({
-				user_id: testUser[0].user_id,
+				userID: testUser[0].userID,
 				password: testUser[0].password,
 				nickname: testUser[0].nickname
 			})
@@ -53,7 +53,7 @@ describe('테스트 계정 생성 및 로그인', () => {
 		request(app)
 			.post('/users/')
 			.send({
-				user_id: testUser[1].user_id,
+				userID: testUser[1].userID,
 				password: testUser[1].password,
 				nickname: testUser[1].nickname
 			})
@@ -70,7 +70,7 @@ describe('테스트 계정 생성 및 로그인', () => {
 		request(app)
 			.post('/users/sign-in')
 			.send({
-				user_id: testUser[0].user_id,
+				userID: testUser[0].userID,
 				password: testUser[0].password
 			})
 			.expect(200)
@@ -90,7 +90,7 @@ describe('테스트 계정 생성 및 로그인', () => {
 		request(app)
 			.post('/users/sign-in')
 			.send({
-				user_id: testUser[1].user_id,
+				userID: testUser[1].userID,
 				password: testUser[1].password
 			})
 			.expect(200)
@@ -202,10 +202,10 @@ describe('GET /todos', () => {
 				else {
 					res.body.length.should.be.equal(3);
 
-					res.body.forEach(function (todo) {
-						testTodos[todo.title].is_achieved.should.be.equal(todo.is_achieved);
+					res.body.forEach((todo) => {
+						testTodos[todo.title].isAchieved.should.be.equal(todo.isAchieved);
 						testTodos[todo.title].uuid = todo.uuid;
-						testTodos[todo.title].user_uuid = testUser[0].uuid;
+						testTodos[todo.title].userUUID = testUser[0].uuid;
 					});
 
 					done();
@@ -318,7 +318,7 @@ describe('PATCH /todos/:uuid', () => {
 			.patch(`/todos/${testTodos['test2'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
-				is_achieved: true
+				isAchieved: true
 			})
 			.expect(204)
 			.end((err, res) => {
@@ -335,7 +335,7 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
 				title: 'test3_edited',
-				is_achieved: true
+				isAchieved: true
 			})
 			.expect(204)
 			.end((err, res) => {
@@ -366,7 +366,7 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
 				title2: 'test3_edited',
-				is_achieved2: true
+				isAchieved2: true
 			})
 			.expect(400)
 			.end((err, res) => {
@@ -383,7 +383,7 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
 				title: 'test3',
-				is_achieved: false
+				isAchieved: false
 			})
 			.expect(400)
 			.end((err, res) => {
@@ -400,7 +400,7 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.send({
 				title: 'test3',
-				is_achieved: false
+				isAchieved: false
 			})
 			.expect(400)
 			.end((err, res) => {

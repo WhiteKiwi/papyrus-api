@@ -26,12 +26,25 @@ module.exports = {
 			'error',
 			'single'
 		],
+		'camelcase': [
+			'error'
+		],
+		'prefer-arrow-callback': [
+			'error'
+		],
+		'arrow-spacing': [
+			'error'
+		],
 		'semi': [
 			'error',
 			'always'
 		],
 		'no-unused-vars': [
 			'error', { 'args': 'none' }
+		],
+		'eol-last': [
+			'error',
+			'always'
 		]
 	}
 };

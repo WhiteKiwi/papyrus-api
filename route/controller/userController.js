@@ -1,12 +1,12 @@
 const User = require('../../model/user');
 const jwt = require('jsonwebtoken');
-const jwt_config = require('../../config/jwt');
+const { secret } = require('../../config/jwt');
 
 module.exports = {
 	// GET /users
 	getUser: async (req, res) => {
 		try {
-			const user = await User.readUserByUserID(req.user.user_id);
+			const user = await User.readUserByUserID(req.user.userID);
 			if (user)
 				res.json(user);
 			else
@@ -19,14 +19,14 @@ module.exports = {
 	},
 	// POST /users
 	postUser: async (req, res) => {
-		const [user_id, password, nickname] = [req.body.user_id, req.body.password, req.body.nickname];
-		if ([user_id, password, nickname].includes(null)) {
+		const [userID, password, nickname] = [req.body.userID, req.body.password, req.body.nickname];
+		if ([userID, password, nickname].includes(null)) {
 			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
 		try {
-			const isSuccess = await User.createUser(user_id, password, nickname);
+			const isSuccess = await User.createUser(userID, password, nickname);
 			if (isSuccess)
 				res.status(201).json({});
 			else
@@ -55,7 +55,7 @@ module.exports = {
 
 		try {
 			// TODO: 30일 이후 자동삭제 구현
-			const isSuccess = await User.deleteUser(req.user.user_id, password);
+			const isSuccess = await User.deleteUser(req.user.userID, password);
 			if (isSuccess) {
 				// TODO: Token 거부리스트 구현
 				res.status(204).json({});
@@ -70,14 +70,14 @@ module.exports = {
 	// TODO: verify로 url 변경
 	// GET /users/verify-user-id - User ID 중복 여부 검사
 	verifyUserID: async (req, res) => {
-		const user_id = req.query.user_id;
-		if (user_id == null) {
+		const userID = req.query.userID;
+		if (userID == null) {
 			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
 		try {
-			const user = await User.readUserByUserID(user_id);
+			const user = await User.readUserByUserID(userID);
 
 			if (user)
 				res.json({ 'OK': true });
@@ -115,21 +115,21 @@ module.exports = {
 	},
 	// GET /users/sign-in - Sign In API
 	signIn: async (req, res) => {
-		const [user_id, password] = [req.body.user_id, req.body.password];
-		if ([user_id, password].includes(null)) {
+		const [userID, password] = [req.body.userID, req.body.password];
+		if ([userID, password].includes(null)) {
 			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
 		try {
-			const user = await User.readUserByUserIDAndPassword(user_id, password);
+			const user = await User.readUserByUserIDAndPassword(userID, password);
 			if (user) {
 				let payload = {
 					uuid: user.uuid,
-					user_id: user.user_id,
+					userID: user.userID,
 					nickname: user.nickname
 				};
-				let token = jwt.sign(payload, jwt_config.secret, { expiresIn: '7d' });
+				let token = jwt.sign(payload, secret, { expiresIn: '7d' });
 
 				// TODO: refresh Token도 구현하기
 				// TODO: Mongo DB에 Session 저장 및 검증

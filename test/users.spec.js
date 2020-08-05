@@ -3,7 +3,7 @@ const app = require('../app');
 require('chai').should();
 
 const testUser = {
-	'user_id': 'testUserQwerQwer',
+	'userID': 'testUserQwerQwer',
 	'password': 'testPassword',
 	'nickname': 'TestKiwi'
 };
@@ -18,7 +18,7 @@ describe('POST /users', () => {
 		request(app)
 			.post('/users')
 			.send({
-				user_id: testUser.user_id,
+				userID: testUser.userID,
 				password: testUser.password,
 				nickname: testUser.nickname
 			})
@@ -35,7 +35,7 @@ describe('POST /users', () => {
 		request(app)
 			.post('/users')
 			.send({
-				user_id: testUser.user_id,
+				userID: testUser.userID,
 				password: testUser.password,
 				nickname: testUser.nickname
 			})
@@ -52,7 +52,7 @@ describe('POST /users', () => {
 describe('GET /users/verify-user-id', () => {
 	it('User ID 중복검사 - 존재 O', (done) => {
 		request(app)
-			.get(`/users/verify-user-id?user_id=${testUser.user_id}`)
+			.get(`/users/verify-user-id?userID=${testUser.userID}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
@@ -67,7 +67,7 @@ describe('GET /users/verify-user-id', () => {
 
 	it('User ID 중복검사 - 존재 X', (done) => {
 		request(app)
-			.get(`/users/verify-user-id?user_id=${testUser.user_id + 'a'}`)
+			.get(`/users/verify-user-id?userID=${testUser.userID + 'a'}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
@@ -118,7 +118,7 @@ describe('POST /users/sign-in', () => {
 		request(app)
 			.post('/users/sign-in')
 			.send({
-				user_id: testUser.user_id,
+				userID: testUser.userID,
 				password: testUser.password
 			})
 			.expect(200)
@@ -145,7 +145,7 @@ describe('GET /users/', () => {
 				if (err)
 					done(err);
 				else {
-					res.body.user_id.should.be.equal(testUser.user_id);
+					res.body.userID.should.be.equal(testUser.userID);
 					res.body.nickname.should.be.equal(testUser.nickname);
 
 					done();

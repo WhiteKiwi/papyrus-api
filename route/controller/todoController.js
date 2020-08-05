@@ -14,14 +14,14 @@ module.exports = {
 	},
 	// GET /todos/:uuid
 	getTodo: async (req, res) => {
-		const todo_uuid = req.params.uuid;
-		if (todo_uuid == null) {
+		const todoUUID = req.params.uuid;
+		if (todoUUID == null) {
 			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
 		try {
-			const todo = await Todo.readTodo(req.user.uuid, todo_uuid);
+			const todo = await Todo.readTodo(req.user.uuid, todoUUID);
 			if (todo)
 				res.json(todo);
 			else
@@ -72,15 +72,15 @@ module.exports = {
 	},
 	// DELETE /todos/:uuid
 	deleteTodo: async (req, res) => {
-		const todo_uuid = req.params.uuid;
-		if (todo_uuid == null) {
+		const todoUUID = req.params.uuid;
+		if (todoUUID == null) {
 			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
 		try {
 			// TODO: SOFT DELETE 구현
-			const isSuccess = await Todo.deleteTodo(req.user.uuid, todo_uuid);
+			const isSuccess = await Todo.deleteTodo(req.user.uuid, todoUUID);
 			if (isSuccess) {
 				res.status(204).json({});
 			} else {
