@@ -3,7 +3,7 @@ const app = require('../app');
 require('chai').should();
 
 const testUser = {
-	'user_id': 'testUserQwerQwer',
+	'userID': 'testUserQwerQwer',
 	'password': 'testPassword',
 	'nickname': 'TestKiwi'
 };
@@ -13,98 +13,102 @@ let accessToken;
 
 // TODO: Test DB 분리하기
 
-describe('POST /users/', () => {
+describe('POST /users', () => {
 	it('회원가입', (done) => {
 		request(app)
-			.post('/users/')
+			.post('/users')
 			.send({
-				user_id: testUser.user_id,
+				userID: testUser.userID,
 				password: testUser.password,
 				nickname: testUser.nickname
 			})
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
 	it('회원가입 - 이미 존재하는 User', (done) => {
 		request(app)
-			.post('/users/')
+			.post('/users')
 			.send({
-				user_id: testUser.user_id,
+				userID: testUser.userID,
 				password: testUser.password,
 				nickname: testUser.nickname
 			})
 			.expect(409)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
 
-describe('GET /users/validate-user-id', () => {
+describe('GET /users/verify-user-id', () => {
 	it('User ID 중복검사 - 존재 O', (done) => {
 		request(app)
-			.get(`/users/validate-user-id?user_id=${testUser.user_id}`)
+			.get(`/users/verify-user-id?userID=${testUser.userID}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.OK.should.be.equal(true);
 
-				res.body.isExist.should.be.equal(true);
-
-				done();
+					done();
+				}
 			});
 	});
 
 	it('User ID 중복검사 - 존재 X', (done) => {
 		request(app)
-			.get(`/users/validate-user-id?user_id=${testUser.user_id + 'a'}`)
+			.get(`/users/verify-user-id?userID=${testUser.userID + 'a'}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.OK.should.be.equal(false);
 
-				res.body.isExist.should.be.equal(false);
-
-				done();
+					done();
+				}
 			});
 	});
 });
 
-describe('GET /users/validate-nickname', () => {
+describe('GET /users/verify-nickname', () => {
 	it('Nickname 중복검사 - 존재 O', (done) => {
 		request(app)
-			.get(`/users/validate-nickname?nickname=${testUser.nickname}`)
+			.get(`/users/verify-nickname?nickname=${testUser.nickname}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.OK.should.be.equal(false);
 
-				res.body.isExist.should.be.equal(true);
-
-				done();
+					done();
+				}
 			});
 	});
 
 	it('Nickname 중복검사 - 존재 X', (done) => {
 		request(app)
-			.get(`/users/validate-nickname?nickname=${testUser.nickname + 'a'}`)
+			.get(`/users/verify-nickname?nickname=${testUser.nickname + 'a'}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.OK.should.be.equal(true);
 
-				res.body.isExist.should.be.equal(false);
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -114,18 +118,19 @@ describe('POST /users/sign-in', () => {
 		request(app)
 			.post('/users/sign-in')
 			.send({
-				user_id: testUser.user_id,
+				userID: testUser.userID,
 				password: testUser.password
 			})
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					accessToken = res.body.accessToken;
+					// refreshToken = res.body.refreshToken;
 
-				accessToken = res.body.accessToken;
-				// refreshToken = res.body.refreshToken;
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -138,12 +143,13 @@ describe('GET /users/', () => {
 			.set({ 'Authorization': `Bearer ${accessToken}` })
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.userID.should.be.equal(testUser.userID);
+					res.body.nickname.should.be.equal(testUser.nickname);
 
-				res.body.user_id.should.be.equal(testUser.user_id);
-				res.body.nickname.should.be.equal(testUser.nickname);
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -159,9 +165,9 @@ describe('DELETE /users/', () => {
 			.expect(401)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -175,9 +181,9 @@ describe('DELETE /users/', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });

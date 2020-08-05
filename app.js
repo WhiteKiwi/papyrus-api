@@ -1,25 +1,25 @@
 const express = require('express');
 const app = express();
-require('dotenv').config();
+const ENV = require('./config/index');
 
 const logger = require('morgan');
 const Sentry = require('@sentry/node');
-Sentry.init({ dsn: process.env.SENTRY_DSN });
+Sentry.init({ dsn: ENV.SENTRY_DSN });
 
-const indexRouter = require('./routes/indexRouter');
-const authRouter = require('./routes/authRouter');
-const userRouter = require('./routes/userRouter');
-const todoRouter = require('./routes/todoRouter');
+const indexRouter = require('./route/indexRouter');
+const authRouter = require('./route/authRouter');
+const userRouter = require('./route/userRouter');
+const todoRouter = require('./route/todoRouter');
 
-const authChecker = require('./routes/middlewares/authChecker');
+const authChecker = require('./route/middleware/authChecker');
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', ENV.PORT);
 
 app.use(Sentry.Handlers.requestHandler());
 
-if (process.env.NODE_ENV == 'production')
+if (ENV.ENVIRONMENT == 'production')
 	app.use(logger('short'));
-else if (process.env.NODE_ENV == 'develop' || process.env.NODE_ENV == 'local')
+else if (ENV.ENVIRONMENT == 'develop' || ENV.ENVIRONMENT == 'local')
 	app.use(logger(':method :url - :response-time ms'));
 
 app.use(express.urlencoded({ extended: false }));

@@ -21,12 +21,14 @@
   "homepage": "https://github.com/WhiteKiwi/Todolist-Server#readme",
   "dependencies": {
     "@sentry/node": "^5.19.2",
+    "bluebird": "^3.7.2",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
+    "mysql2": "^2.1.0",
     "sha256": "^0.2.0"
   },
   "devDependencies": {

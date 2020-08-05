@@ -5,12 +5,12 @@ require('chai').should();
 let accessToken = ['', ''];
 const testUser = [
 	{
-		'user_id': 'testUserQwerQwer',
+		'userID': 'testUserQwerQwer',
 		'password': 'testPassword',
 		'nickname': 'TestKiwi'
 	},
 	{
-		'user_id': 'testUserQwerQwer2',
+		'userID': 'testUserQwerQwer2',
 		'password': 'testPassword',
 		'nickname': 'TestKiwi2'
 	}
@@ -19,15 +19,15 @@ const testUser = [
 const testTodos = {
 	test1: {
 		'title': 'test1',
-		'is_achieved': false
+		'isAchieved': false
 	},
 	test2: {
 		'title': 'test2',
-		'is_achieved': false
+		'isAchieved': false
 	},
 	test3: {
 		'title': 'test3',
-		'is_achieved': false
+		'isAchieved': false
 	}
 };
 
@@ -36,16 +36,16 @@ describe('테스트 계정 생성 및 로그인', () => {
 		request(app)
 			.post('/users/')
 			.send({
-				user_id: testUser[0].user_id,
+				userID: testUser[0].userID,
 				password: testUser[0].password,
 				nickname: testUser[0].nickname
 			})
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -53,16 +53,16 @@ describe('테스트 계정 생성 및 로그인', () => {
 		request(app)
 			.post('/users/')
 			.send({
-				user_id: testUser[1].user_id,
+				userID: testUser[1].userID,
 				password: testUser[1].password,
 				nickname: testUser[1].nickname
 			})
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -70,18 +70,19 @@ describe('테스트 계정 생성 및 로그인', () => {
 		request(app)
 			.post('/users/sign-in')
 			.send({
-				user_id: testUser[0].user_id,
+				userID: testUser[0].userID,
 				password: testUser[0].password
 			})
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					accessToken[0] = res.body.accessToken;
+					// refreshToken = res.body.refreshToken;
 
-				accessToken[0] = res.body.accessToken;
-				// refreshToken = res.body.refreshToken;
-
-				done();
+					done();
+				}
 			});
 	});
 
@@ -89,18 +90,19 @@ describe('테스트 계정 생성 및 로그인', () => {
 		request(app)
 			.post('/users/sign-in')
 			.send({
-				user_id: testUser[1].user_id,
+				userID: testUser[1].userID,
 				password: testUser[1].password
 			})
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					accessToken[1] = res.body.accessToken;
+					// refreshToken = res.body.refreshToken;
 
-				accessToken[1] = res.body.accessToken;
-				// refreshToken = res.body.refreshToken;
-
-				done();
+					done();
+				}
 			});
 	});
 
@@ -111,11 +113,12 @@ describe('테스트 계정 생성 및 로그인', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					testUser[0].uuid = res.body.uuid;
 
-				testUser[0].uuid = res.body.uuid;
-
-				done();
+					done();
+				}
 			});
 	});
 
@@ -126,11 +129,12 @@ describe('테스트 계정 생성 및 로그인', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					testUser[1].uuid = res.body.uuid;
 
-				testUser[1].uuid = res.body.uuid;
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -147,9 +151,9 @@ describe('POST /todos', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -163,9 +167,9 @@ describe('POST /todos', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -179,9 +183,9 @@ describe('POST /todos', () => {
 			.expect(201)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -194,17 +198,18 @@ describe('GET /todos', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					res.body.length.should.be.equal(3);
 
-				res.body.length.should.be.equal(3);
+					res.body.forEach((todo) => {
+						testTodos[todo.title].isAchieved.should.be.equal(todo.isAchieved);
+						testTodos[todo.title].uuid = todo.uuid;
+						testTodos[todo.title].userUUID = testUser[0].uuid;
+					});
 
-				res.body.forEach(function (todo) {
-					testTodos[todo.title].is_achieved.should.be.equal(todo.is_achieved);
-					testTodos[todo.title].uuid = todo.uuid;
-					testTodos[todo.title].user_uuid = testUser[0].uuid;
-				});
-
-				done();
+					done();
+				}
 			});
 	});
 });
@@ -217,13 +222,14 @@ describe('GET /todos/:uuid', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					for (let key in res.body) {
+						res.body[key].should.be.equal(testTodos['test1'][key]);
+					}
 
-				for (let key in res.body) {
-					res.body[key].should.be.equal(testTodos['test1'][key]);
+					done();
 				}
-
-				done();
 			});
 	});
 
@@ -234,13 +240,14 @@ describe('GET /todos/:uuid', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					for (let key in res.body) {
+						res.body[key].should.be.equal(testTodos['test2'][key]);
+					}
 
-				for (let key in res.body) {
-					res.body[key].should.be.equal(testTodos['test2'][key]);
+					done();
 				}
-
-				done();
 			});
 	});
 
@@ -251,13 +258,14 @@ describe('GET /todos/:uuid', () => {
 			.expect(200)
 			.end((err, res) => {
 				if (err)
-					throw err;
+					done(err);
+				else {
+					for (let key in res.body) {
+						res.body[key].should.be.equal(testTodos['test3'][key]);
+					}
 
-				for (let key in res.body) {
-					res.body[key].should.be.equal(testTodos['test3'][key]);
+					done();
 				}
-
-				done();
 			});
 	});
 
@@ -268,9 +276,9 @@ describe('GET /todos/:uuid', () => {
 			.expect(404)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -281,9 +289,9 @@ describe('GET /todos/:uuid', () => {
 			.expect(404)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -299,9 +307,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -310,14 +318,14 @@ describe('PATCH /todos/:uuid', () => {
 			.patch(`/todos/${testTodos['test2'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
-				is_achieved: true
+				isAchieved: true
 			})
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -327,14 +335,14 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
 				title: 'test3_edited',
-				is_achieved: true
+				isAchieved: true
 			})
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -346,9 +354,9 @@ describe('PATCH /todos/:uuid', () => {
 			.expect(400)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -358,14 +366,14 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
 				title2: 'test3_edited',
-				is_achieved2: true
+				isAchieved2: true
 			})
 			.expect(400)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -375,14 +383,14 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
 				title: 'test3',
-				is_achieved: false
+				isAchieved: false
 			})
-			.expect(404)
+			.expect(400)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -392,14 +400,14 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.send({
 				title: 'test3',
-				is_achieved: false
+				isAchieved: false
 			})
-			.expect(404)
+			.expect(400)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -412,9 +420,9 @@ describe('DELETE /todos/:uuid', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -422,12 +430,12 @@ describe('DELETE /todos/:uuid', () => {
 		request(app)
 			.delete('/todos/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee')
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
-			.expect(404)
+			.expect(400)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -435,12 +443,12 @@ describe('DELETE /todos/:uuid', () => {
 		request(app)
 			.delete(`/todos/${testTodos['test2'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
-			.expect(404)
+			.expect(400)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
@@ -456,9 +464,9 @@ describe('테스트 계정 삭제', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 
@@ -472,9 +480,9 @@ describe('테스트 계정 삭제', () => {
 			.expect(204)
 			.end((err, res) => {
 				if (err)
-					throw err;
-
-				done();
+					done(err);
+				else
+					done();
 			});
 	});
 });
