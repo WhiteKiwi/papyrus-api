@@ -1,74 +1,95 @@
 const Todo = require('../../model/todo');
 
 module.exports = {
-	// GET /todos - 유저의 Todo 리스트 반환
-	getTodos: function (req, res) {
-		Todo.getTodos(req.user.uuid).then((rows) => {
+	// GET /todos
+	getTodos: async (req, res) => {
+		try {
+			const todos = await Todo.readTodos(req.user.uuid);
 			// TODO: 카테고리, 미해결 등 옵션 추가
-			res.json(rows);
-		}).catch((err) => { 
+			res.json(todos);
+		} catch (err) {
 			console.log(err);
 			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
-		});
+		}
 	},
-	// GET /todos/:uuid - 상세정보 반환
-	getTodoInfo: function (req, res) {
-		Todo.getTodo(req.user.uuid, req.params.uuid).then((todo) => {
-			res.json(todo);
-		}).catch((err) => { 
-			if (err.type == 'custom') {
-				res.status(err.httpStatusCode).json({ 'errorMsg': err.message });
-			} else {
-				console.log(err);
-				res.status(500).json({ 'errorMsg': 'Internal Server Error' });
-			}
-		});
+	// GET /todos/:uuid
+	getTodo: async (req, res) => {
+		const todo_uuid = req.params.uuid;
+		if (todo_uuid == null) {
+			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			return;
+		}
+
+		try {
+			const todo = await Todo.readTodo(req.user.uuid, todo_uuid);
+			if (todo)
+				res.json(todo);
+			else
+				res.status(404).json({ 'errorMsg': 'Not Found' });
+		} catch (err) {
+			console.log(err);
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+		}
 	},
-	// POST /todos - Todo 추가
-	addTodo: function (req, res) {
-		let title = req.body.title;
-		if (title != '') {
-			Todo.addTodo(req.user.uuid, title).then(() => {
+	// POST /todos
+	postTodo: async (req, res) => {
+		const title = req.body.title;
+		if (title == null) {
+			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			return;
+		}
+
+		try {
+			const isSuccess = await Todo.createTodo(req.user.uuid, title);
+			if (isSuccess)
 				res.status(201).json({});
-			}).catch((err) => {
-				console.log(err);
-				res.status(500).json({ 'errorMsg': 'Internal Server Error' });
-			});
-		} else {
-			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			else
+				res.status(400).json({ 'errorMsg': 'Bad Request' });
+		} catch (err) {
+			console.log(err);
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
 		}
 	},
-	// PATCH /todos/:uuid - 정보 Update
-	updateTodo: function (req, res) {
-		let todo = req.body;
-		if (Object.keys(todo).length != 0) {
-			todo.uuid = req.params.uuid;
-			Todo.updateTodo(req.user.uuid, todo).then(() => {
+	// PATCH /todos/:uuid
+	patchTodo: async (req, res) => {
+		const [todo, todoUUID] = [req.body, req.params.uuid];
+		if ([todo, todoUUID].includes(null)) {
+			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			return;
+		}
+
+		try {
+			todo.uuid = todoUUID;
+			const isSuccess = await Todo.updateTodo(req.user.uuid, todo);
+			if (isSuccess)
 				res.status(204).json({});
-			}).catch((err) => {
-				if (err.type == 'custom') {
-					res.status(err.httpStatusCode).json({ 'errorMsg': err.message });
-				} else {
-					console.log(err);
-					res.status(500).json({ 'errorMsg': 'Internal Server Error' });
-				}
-			});
-		} else {
-			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			else
+				res.status(400).json({ 'errorMsg': 'Bad Request' });
+		} catch (err) {
+			console.log(err);
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
 		}
 	},
-	// DELETE /todos/:uuid - Todo 삭제
-	deleteTodo: function (req, res) {
-		Todo.deleteTodo(req.user.uuid, req.params.uuid).then(() => {
-			// TODO: Token 거부리스트 구현
-			res.status(204).json({});
-		}).catch((err) => {
-			if (err.type == 'custom') {
-				res.status(err.httpStatusCode).json({ 'errorMsg': err.message });
+	// DELETE /todos/:uuid
+	deleteTodo: async (req, res) => {
+		const todo_uuid = req.params.uuid;
+		if (todo_uuid == null) {
+			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			return;
+		}
+
+		try {
+			// TODO: SOFT DELETE 구현
+			const isSuccess = await Todo.deleteTodo(req.user.uuid, todo_uuid);
+			if (isSuccess) {
+				res.status(204).json({});
 			} else {
-				console.log(err);
-				res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+				// 값이 존재하지 않는 요청은 400? 404? => 요청이 잘못됨 - 400
+				res.status(400).json({ 'errorMsg': 'Bad Request' });
 			}
-		});
+		} catch (err) {
+			console.log(err);
+			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+		}
 	}
 };

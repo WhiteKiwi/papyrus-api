@@ -13,10 +13,10 @@ let accessToken;
 
 // TODO: Test DB 분리하기
 
-describe('POST /users/', () => {
+describe('POST /users', () => {
 	it('회원가입', (done) => {
 		request(app)
-			.post('/users/')
+			.post('/users')
 			.send({
 				user_id: testUser.user_id,
 				password: testUser.password,
@@ -33,7 +33,7 @@ describe('POST /users/', () => {
 
 	it('회원가입 - 이미 존재하는 User', (done) => {
 		request(app)
-			.post('/users/')
+			.post('/users')
 			.send({
 				user_id: testUser.user_id,
 				password: testUser.password,
@@ -49,16 +49,16 @@ describe('POST /users/', () => {
 	});
 });
 
-describe('GET /users/validate-user-id', () => {
+describe('GET /users/verify-user-id', () => {
 	it('User ID 중복검사 - 존재 O', (done) => {
 		request(app)
-			.get(`/users/validate-user-id?user_id=${testUser.user_id}`)
+			.get(`/users/verify-user-id?user_id=${testUser.user_id}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
 					done(err);
 				else {
-					res.body.isExist.should.be.equal(true);
+					res.body.OK.should.be.equal(true);
 
 					done();
 				}
@@ -67,13 +67,13 @@ describe('GET /users/validate-user-id', () => {
 
 	it('User ID 중복검사 - 존재 X', (done) => {
 		request(app)
-			.get(`/users/validate-user-id?user_id=${testUser.user_id + 'a'}`)
+			.get(`/users/verify-user-id?user_id=${testUser.user_id + 'a'}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
 					done(err);
 				else {
-					res.body.isExist.should.be.equal(false);
+					res.body.OK.should.be.equal(false);
 
 					done();
 				}
@@ -81,16 +81,16 @@ describe('GET /users/validate-user-id', () => {
 	});
 });
 
-describe('GET /users/validate-nickname', () => {
+describe('GET /users/verify-nickname', () => {
 	it('Nickname 중복검사 - 존재 O', (done) => {
 		request(app)
-			.get(`/users/validate-nickname?nickname=${testUser.nickname}`)
+			.get(`/users/verify-nickname?nickname=${testUser.nickname}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
 					done(err);
 				else {
-					res.body.isExist.should.be.equal(true);
+					res.body.OK.should.be.equal(false);
 
 					done();
 				}
@@ -99,13 +99,13 @@ describe('GET /users/validate-nickname', () => {
 
 	it('Nickname 중복검사 - 존재 X', (done) => {
 		request(app)
-			.get(`/users/validate-nickname?nickname=${testUser.nickname + 'a'}`)
+			.get(`/users/verify-nickname?nickname=${testUser.nickname + 'a'}`)
 			.expect(200)
 			.end((err, res) => {
 				if (err)
 					done(err);
 				else {
-					res.body.isExist.should.be.equal(false);
+					res.body.OK.should.be.equal(true);
 
 					done();
 				}

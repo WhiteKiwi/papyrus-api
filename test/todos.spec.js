@@ -385,7 +385,7 @@ describe('PATCH /todos/:uuid', () => {
 				title: 'test3',
 				is_achieved: false
 			})
-			.expect(404)
+			.expect(400)
 			.end((err, res) => {
 				if (err)
 					done(err);
@@ -402,7 +402,7 @@ describe('PATCH /todos/:uuid', () => {
 				title: 'test3',
 				is_achieved: false
 			})
-			.expect(404)
+			.expect(400)
 			.end((err, res) => {
 				if (err)
 					done(err);
@@ -430,7 +430,7 @@ describe('DELETE /todos/:uuid', () => {
 		request(app)
 			.delete('/todos/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee')
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
-			.expect(404)
+			.expect(400)
 			.end((err, res) => {
 				if (err)
 					done(err);
@@ -443,7 +443,7 @@ describe('DELETE /todos/:uuid', () => {
 		request(app)
 			.delete(`/todos/${testTodos['test2'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
-			.expect(404)
+			.expect(400)
 			.end((err, res) => {
 				if (err)
 					done(err);
