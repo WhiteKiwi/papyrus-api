@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const ENV = require('./config/index');
+const { HTTPStatusCode } = require('./constants');
 const logger = require('morgan');
 const Sentry = require('@sentry/node');
 Sentry.init({ dsn: ENV.SENTRY_DSN });
@@ -33,8 +34,8 @@ app.use('/todos', authChecker, todoRouter);
 
 // Error Handler
 app.use(Sentry.Handlers.errorHandler());
-app.use((req, res, next) => res.status(404).json({ 'errorMsg': 'Not Found'}));
-app.use((err, req, res, next) => res.status(500).json({ 'errorMsg': 'Internal Server Error'}));
+app.use((req, res, next) => res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found'}));
+app.use((err, req, res, next) => res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error'}));
 
 
 app.listen(app.get('port'), () => {

@@ -1,6 +1,7 @@
 const UserRepository = require('../../model/user');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../../config/jwt');
+const { HTTPStatusCode } = require('../../constants');
 
 const userRepository = new UserRepository();
 module.exports = {
@@ -11,33 +12,33 @@ module.exports = {
 			if (user)
 				res.json(user);
 			else
-				res.status(404).json({ 'errorMsg': 'Not Found' });
+				res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' });
 		} catch (err) {
 			console.log(err);
 			// TODO: Error Msg 등 constants 통일하기
-			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// POST /users
 	postUser: async (req, res) => {
 		const [userID, password, nickname] = [req.body.userID, req.body.password, req.body.nickname];
 		if ([userID, password, nickname].includes(null)) {
-			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
 		try {
 			const isSuccess = await userRepository.create(userID, password, nickname);
 			if (isSuccess)
-				res.status(201).json({});
+				res.status(HTTPStatusCode.Created).json({});
 			else
-				res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+				res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		} catch (err) {
 			if (err.errno === 1062) { // MySql Error No.
-				res.status(409).json({ 'errorMsg': 'User ID 또는 Nickname이 중복되었습니다.' });
+				res.status(HTTPStatusCode.Conflict).json({ message: 'User ID 또는 Nickname이 중복되었습니다.' });
 			} else {
 				console.log(err);
-				res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+				res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 			}
 		}
 	},
@@ -50,7 +51,7 @@ module.exports = {
 	deleteUser: async (req, res) => {
 		const password = req.body.password;
 		if (password == null) {
-			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
@@ -59,13 +60,13 @@ module.exports = {
 			const isSuccess = await userRepository.delete(req.user.userID, password);
 			if (isSuccess) {
 				// TODO: Token 거부리스트 구현
-				res.status(204).json({});
+				res.status(HTTPStatusCode.NoContent).json({});
 			} else {
-				res.status(401).json({ 'errorMsg': 'Incorrect Password' });
+				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Password' });
 			}
 		} catch (err) {
 			console.log(err);
-			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// TODO: verify로 url 변경
@@ -73,7 +74,7 @@ module.exports = {
 	verifyUserID: async (req, res) => {
 		const userID = req.query.userID;
 		if (userID == null) {
-			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
@@ -86,14 +87,14 @@ module.exports = {
 				res.json({ 'OK': false });
 		} catch (err) {
 			console.log(err);
-			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// GET /users/verify-nickname - 닉네임 중복 여부 검사
 	verifyNickname: async (req, res) => {
 		const nickname = req.query.nickname;
 		if (nickname == null) {
-			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
@@ -106,7 +107,7 @@ module.exports = {
 				res.json({ 'OK': true });
 		} catch (err) {
 			console.log(err);
-			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// PATCH /users/change-password - Password 변경 API
@@ -118,7 +119,7 @@ module.exports = {
 	signIn: async (req, res) => {
 		const [userID, password] = [req.body.userID, req.body.password];
 		if ([userID, password].includes(null)) {
-			res.status(400).json({ 'errorMsg': '필요한 정보가 누락되었습니다.' });
+			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
@@ -139,11 +140,11 @@ module.exports = {
 					'refreshToken': ''
 				});
 			} else {
-				res.status(401).json({ 'errorMsg': 'Incorrect Information' });
+				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Information' });
 			}
 		} catch (err) {
 			console.log(err);
-			res.status(500).json({ 'errorMsg': 'Internal Server Error' });
+			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// GET /users/sign-out - 로그아웃
