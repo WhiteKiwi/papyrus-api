@@ -1,3 +1,4 @@
+const Sentry = require('@sentry/node');
 const { connectionPool } = require('../config/database.js');
 
 // TODO: SQL Injection 방지
@@ -31,9 +32,7 @@ class TodoRepository {
 
 			return rows;
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}
@@ -54,9 +53,7 @@ class TodoRepository {
 
 			return rows[0];
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}
@@ -74,9 +71,7 @@ class TodoRepository {
 
 			return results.affectedRows > 0 ? true : false;
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}
@@ -105,9 +100,7 @@ class TodoRepository {
 
 			return results.affectedRows > 0 ? true : false;
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}
@@ -125,9 +118,7 @@ class TodoRepository {
 
 			return results.affectedRows > 0 ? true : false;
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}

@@ -1,3 +1,4 @@
+const Sentry = require('@sentry/node');
 const UserRepository = require('../../model/user');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../../config/jwt');
@@ -14,15 +15,14 @@ module.exports = {
 			else
 				res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' });
 		} catch (err) {
-			console.log(err);
-			// TODO: Error Msg 등 constants 통일하기
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// POST /users
 	postUser: async (req, res) => {
 		const [userID, password, nickname] = [req.body.userID, req.body.password, req.body.nickname];
-		if ([userID, password, nickname].includes(null)) {
+		if ([userID, password, nickname].includes(undefined)) {
 			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
@@ -65,7 +65,7 @@ module.exports = {
 				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Password' });
 			}
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -86,7 +86,7 @@ module.exports = {
 			else
 				res.json({ 'OK': false });
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -106,7 +106,7 @@ module.exports = {
 			else
 				res.json({ 'OK': true });
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -118,7 +118,7 @@ module.exports = {
 	// GET /users/sign-in - Sign In API
 	signIn: async (req, res) => {
 		const [userID, password] = [req.body.userID, req.body.password];
-		if ([userID, password].includes(null)) {
+		if ([userID, password].includes(undefined)) {
 			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
@@ -143,7 +143,7 @@ module.exports = {
 				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Information' });
 			}
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
