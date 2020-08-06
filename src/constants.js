@@ -11,7 +11,14 @@ const HTTPStatusCode = {
 
 	InternalServerError: 500,
 };
+const ENVIRONMENT = {
+	LOCAL: 'LOCAL',
+	DEVELOPMENT: 'DEVELOPMENT',
+	STAGING: 'STAGING',
+	PRODUCTION: 'PRODUCTION',
+};
 
 module.exports = {
 	HTTPStatusCode,
+	ENVIRONMENT,
 };

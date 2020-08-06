@@ -1,21 +1,24 @@
 const express = require('express');
 const app = express();
-const ENV = require('./config/index');
-const { HTTPStatusCode } = require('./constants');
+const config = require('./config');
+const { HTTPStatusCode, ENVIRONMENT } = require('./constants');
 const logger = require('morgan');
 const Sentry = require('@sentry/node');
-Sentry.init({ dsn: ENV.SENTRY_DSN });
+Sentry.init({ 
+	dsn: config.SENTRY_DSN,
+	environment: config.ENVIRONMENT,
+});
 
-app.set('port', ENV.PORT);
+app.set('port', config.PORT);
 
 // Middlewares
 const authChecker = require('./route/middleware/authChecker');
 
 app.use(Sentry.Handlers.requestHandler());
 
-if (ENV.ENVIRONMENT == 'production')
+if (config.ENVIRONMENT == ENVIRONMENT.PRODUCTION || config.ENVIRONMENT == ENVIRONMENT.STAGING)
 	app.use(logger('short'));
-else if (ENV.ENVIRONMENT == 'develop' || ENV.ENVIRONMENT == 'local')
+else if (config.ENVIRONMENT == ENVIRONMENT.DEVELOPMENT || config.ENVIRONMENT == ENVIRONMENT.LOCAL)
 	app.use(logger(':method :url - :response-time ms'));
 
 app.use(express.urlencoded({ extended: false }));
