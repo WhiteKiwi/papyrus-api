@@ -135,10 +135,10 @@ describe('POST /users/sign-in', () => {
 	});
 });
 
-describe('GET /users/', () => {
+describe('GET /users', () => {
 	it('내 정보 가져오기', (done) => {
 		request(app)
-			.get('/users/')
+			.get('/users')
 			.expect(200)
 			.set({ 'Authorization': `Bearer ${accessToken}` })
 			.end((err, res) => {
@@ -154,10 +154,10 @@ describe('GET /users/', () => {
 	});
 });
 
-describe('DELETE /users/', () => {
+describe('DELETE /users', () => {
 	it('회원탈퇴 - Incorrect Password', (done) => {
 		request(app)
-			.delete('/users/')
+			.delete('/users')
 			.set({ 'Authorization': `Bearer ${accessToken}` })
 			.send({
 				password: testUser.password + '2'
@@ -173,7 +173,7 @@ describe('DELETE /users/', () => {
 
 	it('회원탈퇴', (done) => {
 		request(app)
-			.delete('/users/')
+			.delete('/users')
 			.set({ 'Authorization': `Bearer ${accessToken}` })
 			.send({
 				password: testUser.password

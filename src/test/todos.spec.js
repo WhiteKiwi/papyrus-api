@@ -34,7 +34,7 @@ const testTodos = {
 describe('테스트 계정 생성 및 로그인', () => {
 	it('계정1 생성', (done) => {
 		request(app)
-			.post('/users/')
+			.post('/users')
 			.send({
 				userID: testUser[0].userID,
 				password: testUser[0].password,
@@ -51,7 +51,7 @@ describe('테스트 계정 생성 및 로그인', () => {
 
 	it('계정2 생성', (done) => {
 		request(app)
-			.post('/users/')
+			.post('/users')
 			.send({
 				userID: testUser[1].userID,
 				password: testUser[1].password,
@@ -108,7 +108,7 @@ describe('테스트 계정 생성 및 로그인', () => {
 
 	it('내 정보 가져오기', (done) => {
 		request(app)
-			.get('/users/')
+			.get('/users')
 			.expect(200)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.end((err, res) => {
@@ -124,7 +124,7 @@ describe('테스트 계정 생성 및 로그인', () => {
 
 	it('내 정보 가져오기', (done) => {
 		request(app)
-			.get('/users/')
+			.get('/users')
 			.expect(200)
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.end((err, res) => {
@@ -456,7 +456,7 @@ describe('DELETE /todos/:uuid', () => {
 describe('테스트 계정 삭제', () => {
 	it('계정1 삭제', (done) => {
 		request(app)
-			.delete('/users/')
+			.delete('/users')
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
 				password: testUser[0].password
@@ -472,7 +472,7 @@ describe('테스트 계정 삭제', () => {
 
 	it('계정2 삭제', (done) => {
 		request(app)
-			.delete('/users/')
+			.delete('/users')
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.send({
 				password: testUser[1].password
