@@ -22,7 +22,7 @@ module.exports = {
 	// POST /users
 	postUser: async (req, res) => {
 		const [userID, password, nickname] = [req.body.userID, req.body.password, req.body.nickname];
-		if ([userID, password, nickname].includes(null)) {
+		if ([userID, password, nickname].includes(undefined)) {
 			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
@@ -118,7 +118,7 @@ module.exports = {
 	// GET /users/sign-in - Sign In API
 	signIn: async (req, res) => {
 		const [userID, password] = [req.body.userID, req.body.password];
-		if ([userID, password].includes(null)) {
+		if ([userID, password].includes(undefined)) {
 			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}

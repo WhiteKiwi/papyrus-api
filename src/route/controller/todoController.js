@@ -56,7 +56,7 @@ module.exports = {
 	// PATCH /todos/:uuid
 	patchTodo: async (req, res) => {
 		const [todo, todoUUID] = [req.body, req.params.uuid];
-		if ([todo, todoUUID].includes(null)) {
+		if ([todo, todoUUID].includes(undefined)) {
 			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
