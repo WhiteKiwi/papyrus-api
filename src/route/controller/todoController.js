@@ -1,3 +1,4 @@
+const Sentry = require('@sentry/node');
 const TodoRepository = require('../../model/todo');
 const { HTTPStatusCode } = require('../../constants');
 
@@ -10,7 +11,7 @@ module.exports = {
 			// TODO: 카테고리, 미해결 등 옵션 추가
 			res.json(todos);
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -29,7 +30,7 @@ module.exports = {
 			else
 				res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' });
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -48,7 +49,7 @@ module.exports = {
 			else
 				res.status(HTTPStatusCode.BadRequest).json({ message: 'Bad Request' });
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -68,7 +69,7 @@ module.exports = {
 			else
 				res.status(HTTPStatusCode.BadRequest).json({ message: 'Bad Request' });
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -90,7 +91,7 @@ module.exports = {
 				res.status(HTTPStatusCode.BadRequest).json({ message: 'Bad Request' });
 			}
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	}

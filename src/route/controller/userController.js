@@ -1,3 +1,4 @@
+const Sentry = require('@sentry/node');
 const UserRepository = require('../../model/user');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../../config/jwt');
@@ -14,8 +15,7 @@ module.exports = {
 			else
 				res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' });
 		} catch (err) {
-			console.log(err);
-			// TODO: Error Msg 등 constants 통일하기
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -65,7 +65,7 @@ module.exports = {
 				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Password' });
 			}
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -86,7 +86,7 @@ module.exports = {
 			else
 				res.json({ 'OK': false });
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -106,7 +106,7 @@ module.exports = {
 			else
 				res.json({ 'OK': true });
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -143,7 +143,7 @@ module.exports = {
 				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Information' });
 			}
 		} catch (err) {
-			console.log(err);
+			Sentry.captureException(err);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},

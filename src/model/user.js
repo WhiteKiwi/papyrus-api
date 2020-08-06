@@ -1,3 +1,4 @@
+const Sentry = require('@sentry/node');
 const { connectionPool, SALT } = require('../config/database.js');
 const sha256 = require('sha256');
 
@@ -29,9 +30,7 @@ class UserRepository {
 
 			return rows[0];
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}
@@ -49,9 +48,7 @@ class UserRepository {
 
 			return rows[0];
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}
@@ -69,9 +66,7 @@ class UserRepository {
 
 			return rows[0];
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}
@@ -90,14 +85,11 @@ class UserRepository {
 
 			return results.affectedRows > 0 ? true : false;
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
+			throw err;
 		} finally {
 			connection.release();
 		}
-
-		return null;
 	}
 
 	// Update User Info
@@ -125,9 +117,7 @@ class UserRepository {
 
 			return results.affectedRows > 0 ? true : false;
 		} catch (err) {
-			if (err) {
-				throw err;
-			}
+			Sentry.captureException(err);
 		} finally {
 			connection.release();
 		}

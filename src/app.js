@@ -4,9 +4,18 @@ const config = require('./config');
 const { HTTPStatusCode, ENVIRONMENT } = require('./constants');
 const logger = require('morgan');
 const Sentry = require('@sentry/node');
-Sentry.init({ 
+Sentry.init({
 	dsn: config.SENTRY_DSN,
 	environment: config.ENVIRONMENT,
+	beforeSend: event => {
+		if (config.ENVIRONMENT == ENVIRONMENT.LOCAL || config.ENVIRONMENT == ENVIRONMENT.DEVELOPMENT) {
+			console.error(event);
+			// this drops the event and nothing will be send to sentry
+			return null;
+		}
+		
+		return event;
+	}
 });
 
 app.set('port', config.PORT);
@@ -36,7 +45,12 @@ app.use('/todos', todoRouter);
 // Error Handler
 app.use(Sentry.Handlers.errorHandler());
 app.use((req, res, next) => res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found'}));
-app.use((err, req, res, next) => res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error'}));
+app.use((err, req, res, next) => {
+	if (err.statusCode && err.message)
+		res.status(err.statusCode).json({ message: err.message });
+	else
+		res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+});
 
 
 app.listen(app.get('port'), () => {
