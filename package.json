@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "mocha --exit --timeout 5000",
+    "start": "node ./src/app.js",
+    "test": "mocha ./src/test --exit --timeout 5000",
     "lint": "./node_modules/.bin/eslint .",
     "lint-fix": "./node_modules/.bin/eslint . --fix"
   },

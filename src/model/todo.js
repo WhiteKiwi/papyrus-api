@@ -1,8 +1,23 @@
 const { connectionPool } = require('../config/database.js');
 
 // TODO: SQL Injection 방지
-module.exports = {
-	readTodos: async (userUUID) => {
+class TodoRepository {
+	constructor() {
+		const self = {};
+
+		self.readAll = this.readAll;
+		self.read = this.read;
+
+		self.create = this.create;
+		
+		self.update = this.update;
+
+		self.delete = this.delete;
+
+		return self;
+	}
+
+	async readAll(userUUID) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -24,8 +39,9 @@ module.exports = {
 		}
 
 		return null;
-	},
-	readTodo: async (userUUID, todoUUID) => {
+	}
+
+	async read(userUUID, todoUUID) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -46,8 +62,9 @@ module.exports = {
 		}
 
 		return null;
-	},
-	createTodo: async (userUUID, title) => {
+	}
+
+	async create(userUUID, title) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -65,8 +82,9 @@ module.exports = {
 		}
 
 		return null;
-	},
-	updateTodo: async (userUUID, todo) => {
+	}
+
+	async update(userUUID, todo) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -95,8 +113,9 @@ module.exports = {
 		}
 
 		return null;
-	},
-	deleteTodo: async (userUUID, todoUUID) => {
+	}
+
+	async delete(userUUID, todoUUID) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -115,4 +134,6 @@ module.exports = {
 
 		return null;
 	}
-};
+}
+
+module.exports = TodoRepository;

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { secret } = require('../../config/jwt');
+const { HTTPStatusCode } = require('../../constants');
 
 // authChecker - jwt token 인증 후 payload에서 user 정보를 뽑아서 req.user에 담아줌
 module.exports = (req, res, next) => {
@@ -15,10 +16,10 @@ module.exports = (req, res, next) => {
 			};
 			next();
 		} else {
-			res.status(401).json({ 'errorMsg': 'Authentication error' });
+			res.status(HTTPStatusCode.Unauthorized).json({ message: 'Authentication error' });
 		}
 	} else {
 		// TODO: Redirect
-		res.status(401).json({ 'errorMsg': 'request\'s Authentication header is empty' });
+		res.status(HTTPStatusCode.Unauthorized).json({ message: 'request\'s Authentication header is empty' });
 	}
 };
