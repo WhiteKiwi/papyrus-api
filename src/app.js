@@ -12,8 +12,6 @@ Sentry.init({
 app.set('port', config.PORT);
 
 // Middlewares
-const authChecker = require('./route/middleware/authChecker');
-
 app.use(Sentry.Handlers.requestHandler());
 
 if (config.ENVIRONMENT == ENVIRONMENT.PRODUCTION || config.ENVIRONMENT == ENVIRONMENT.STAGING)
@@ -32,8 +30,8 @@ const todoRouter = require('./route/todoRouter');
 
 app.use(indexRouter);
 app.use('/users', authRouter);
-app.use('/users', authChecker, userRouter);
-app.use('/todos', authChecker, todoRouter);
+app.use('/users', userRouter);
+app.use('/todos', todoRouter);
 
 // Error Handler
 app.use(Sentry.Handlers.errorHandler());

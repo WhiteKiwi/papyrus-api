@@ -1,7 +1,11 @@
 const router = require('express').Router();
 const userController = require('./controller/userController');
 
-// USER API
+// Middleware
+const authChecker = require('../route/middleware/authChecker');
+router.use(authChecker);
+
+// User API
 router.get('/', userController.getUser);
 router.patch('/', userController.patchUser);
 router.delete('/', userController.deleteUser);
