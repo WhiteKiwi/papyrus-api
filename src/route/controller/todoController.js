@@ -1,10 +1,11 @@
-const Todo = require('../../model/todo');
+const TodoRepository = require('../../model/todo');
 
+const todoRepository = new TodoRepository();
 module.exports = {
 	// GET /todos
 	getTodos: async (req, res) => {
 		try {
-			const todos = await Todo.readTodos(req.user.uuid);
+			const todos = await todoRepository.readAll(req.user.uuid);
 			// TODO: 카테고리, 미해결 등 옵션 추가
 			res.json(todos);
 		} catch (err) {
@@ -21,7 +22,7 @@ module.exports = {
 		}
 
 		try {
-			const todo = await Todo.readTodo(req.user.uuid, todoUUID);
+			const todo = await todoRepository.read(req.user.uuid, todoUUID);
 			if (todo)
 				res.json(todo);
 			else
@@ -40,7 +41,7 @@ module.exports = {
 		}
 
 		try {
-			const isSuccess = await Todo.createTodo(req.user.uuid, title);
+			const isSuccess = await todoRepository.create(req.user.uuid, title);
 			if (isSuccess)
 				res.status(201).json({});
 			else
@@ -60,7 +61,7 @@ module.exports = {
 
 		try {
 			todo.uuid = todoUUID;
-			const isSuccess = await Todo.updateTodo(req.user.uuid, todo);
+			const isSuccess = await todoRepository.update(req.user.uuid, todo);
 			if (isSuccess)
 				res.status(204).json({});
 			else
@@ -80,7 +81,7 @@ module.exports = {
 
 		try {
 			// TODO: SOFT DELETE 구현
-			const isSuccess = await Todo.deleteTodo(req.user.uuid, todoUUID);
+			const isSuccess = await todoRepository.delete(req.user.uuid, todoUUID);
 			if (isSuccess) {
 				res.status(204).json({});
 			} else {

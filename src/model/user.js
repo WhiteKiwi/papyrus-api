@@ -1,8 +1,25 @@
 const { connectionPool, SALT } = require('../config/database.js');
 const sha256 = require('sha256');
 
-module.exports = {
-	readUserByUserID: async (userID) => {
+class UserRepository {
+	constructor() {
+		const self = {};
+
+		self.readByUserID = this.readByUserID;
+		self.readByNickname = this.readByNickname;
+		self.readByUserIDAndPassword = this.readByUserIDAndPassword;
+
+		self.create = this.create;
+		
+		self.update = this.update;
+		self.updatePassword = this.updatePassword;
+
+		self.delete = this.delete;
+
+		return self;
+	}
+
+	async readByUserID(userID) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -20,8 +37,9 @@ module.exports = {
 		}
 
 		return null;
-	},
-	readUserByNickname: async (nickname) => {
+	}
+
+	async readByNickname(nickname) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -39,8 +57,9 @@ module.exports = {
 		}
 
 		return null;
-	},
-	readUserByUserIDAndPassword: async (userID, password) => {
+	}
+
+	async readByUserIDAndPassword(userID, password) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -58,8 +77,9 @@ module.exports = {
 		}
 
 		return null;
-	},
-	createUser: async (userID, password, nickname) => {
+	}
+
+	async create(userID, password, nickname) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -78,7 +98,8 @@ module.exports = {
 		}
 
 		return null;
-	},
+	}
+
 	// Update User Info
 	// 	{
 	// 		"uuid": "e3990bde-cb59-11ea-9d60-560002b4c70f",
@@ -86,10 +107,15 @@ module.exports = {
 	//		"password": ""
 	//		...
 	// 	}
-	updateUser: (user) => {
+	update(user) {
 		// TODO: API 구현
-	},
-	deleteUser: async (userID, password) => {
+	}
+
+	updatePassword(userID, oldPassword, newPassword) {
+		// TODO: API 구현
+	}
+
+	async delete(userID, password) {
 		let connection = await connectionPool.getConnection(async (conn) => conn);
 
 		try {
@@ -107,9 +133,7 @@ module.exports = {
 		}
 
 		return null;
-	},
-	// update Password
-	updatePassword: (oldPassword, newPassword) => {
-		// TODO: API 구현
-	},
-};
+	}
+}
+
+module.exports = UserRepository;

@@ -1,12 +1,13 @@
-const User = require('../../model/user');
+const UserRepository = require('../../model/user');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../../config/jwt');
 
+const userRepository = new UserRepository();
 module.exports = {
 	// GET /users
 	getUser: async (req, res) => {
 		try {
-			const user = await User.readUserByUserID(req.user.userID);
+			const user = await userRepository.readByUserID(req.user.userID);
 			if (user)
 				res.json(user);
 			else
@@ -26,7 +27,7 @@ module.exports = {
 		}
 
 		try {
-			const isSuccess = await User.createUser(userID, password, nickname);
+			const isSuccess = await userRepository.create(userID, password, nickname);
 			if (isSuccess)
 				res.status(201).json({});
 			else
@@ -55,7 +56,7 @@ module.exports = {
 
 		try {
 			// TODO: 30일 이후 자동삭제 구현
-			const isSuccess = await User.deleteUser(req.user.userID, password);
+			const isSuccess = await userRepository.delete(req.user.userID, password);
 			if (isSuccess) {
 				// TODO: Token 거부리스트 구현
 				res.status(204).json({});
@@ -77,7 +78,7 @@ module.exports = {
 		}
 
 		try {
-			const user = await User.readUserByUserID(userID);
+			const user = await userRepository.readByUserID(userID);
 
 			if (user)
 				res.json({ 'OK': true });
@@ -97,7 +98,7 @@ module.exports = {
 		}
 
 		try {
-			const user = await User.readUserByNickname(nickname);
+			const user = await userRepository.readByNickname(nickname);
 
 			if (user)
 				res.json({ 'OK': false });
@@ -122,7 +123,7 @@ module.exports = {
 		}
 
 		try {
-			const user = await User.readUserByUserIDAndPassword(userID, password);
+			const user = await userRepository.readByUserIDAndPassword(userID, password);
 			if (user) {
 				let payload = {
 					uuid: user.uuid,
