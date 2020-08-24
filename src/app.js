@@ -24,10 +24,10 @@ function init(app) {
 	// Middlewares
 	app.use(Sentry.Handlers.requestHandler());
 
-	if ([ENVIRONMENT.PRODUCTION, ENVIRONMENT.STAGING].includes(config.ENVIRONMENT))
-		app.use(logger('short'));
-	else
+	if ([ENVIRONMENT.LOCAL, ENVIRONMENT.DEVELOPMENT].includes(config.ENVIRONMENT))
 		app.use(logger(':method :url - :response-time ms'));
+	else
+		app.use(logger('short'));
 
 	app.use(express.urlencoded({ extended: false }));
 	app.use(express.json());
