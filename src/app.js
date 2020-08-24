@@ -9,9 +9,10 @@ const { HTTPStatusCode, ENVIRONMENT } = require('./constants');
 Sentry.init({
 	dsn: config.SENTRY_DSN,
 	environment: config.ENVIRONMENT,
-	beforeSend: event => {
-		if (config.ENVIRONMENT == ENVIRONMENT.LOCAL || config.ENVIRONMENT == ENVIRONMENT.DEVELOPMENT) {
-			console.error(event);
+	beforeSend: (event, hint) => {
+		if ([ENVIRONMENT.LOCAL, ENVIRONMENT.DEVELOPMENT].includes(config.ENVIRONMENT)) {
+			console.error(hint.originalException);
+
 			// this drops the event and nothing will be send to sentry
 			return null;
 		}
