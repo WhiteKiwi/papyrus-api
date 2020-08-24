@@ -1,7 +1,7 @@
 const Sentry = require('@sentry/node');
 const UserRepository = require('../../model/user');
 const jwt = require('jsonwebtoken');
-const { secret } = require('../../config/jwt');
+const { SECRET } = require('../../config/jwt');
 const { HTTPStatusCode } = require('../../constants');
 
 const userRepository = new UserRepository();
@@ -131,7 +131,7 @@ module.exports = {
 					userID: user.userID,
 					nickname: user.nickname
 				};
-				let token = jwt.sign(payload, secret, { expiresIn: '7d' });
+				let token = jwt.sign(payload, SECRET, { expiresIn: '7d' });
 
 				// TODO: refresh Token도 구현하기
 				// TODO: Mongo DB에 Session 저장 및 검증

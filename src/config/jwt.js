@@ -1,3 +1,3 @@
-const secret = process.env.JWT_SECRET || 'localTest';
+const SECRET = process.env.JWT_SECRET || 'localTest';
 
-module.exports = { secret };
+module.exports = { SECRET };

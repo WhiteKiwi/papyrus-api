@@ -1,9 +1,11 @@
+const Sentry = require('@sentry/node');
 const express = require('express');
 const app = express();
+const logger = require('morgan');
+require('dotenv').config();
 const config = require('./config');
 const { HTTPStatusCode, ENVIRONMENT } = require('./constants');
-const logger = require('morgan');
-const Sentry = require('@sentry/node');
+
 Sentry.init({
 	dsn: config.SENTRY_DSN,
 	environment: config.ENVIRONMENT,
@@ -13,7 +15,7 @@ Sentry.init({
 			// this drops the event and nothing will be send to sentry
 			return null;
 		}
-		
+
 		return event;
 	}
 });
@@ -44,7 +46,7 @@ app.use('/todos', todoRouter);
 
 // Error Handler
 app.use(Sentry.Handlers.errorHandler());
-app.use((req, res, next) => res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found'}));
+app.use((req, res, next) => res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' }));
 app.use((err, req, res, next) => {
 	if (err.statusCode && err.message)
 		res.status(err.statusCode).json({ message: err.message });

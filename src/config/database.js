@@ -1,6 +1,5 @@
 const mysql = require('mysql2/promise');
 const bluebird = require('bluebird');
-require('dotenv').config();
 
 let connectionPool = mysql.createPool({
 	host: process.env.MYSQL_HOST || 'localhost',
@@ -13,5 +12,5 @@ let connectionPool = mysql.createPool({
 
 module.exports = {
 	connectionPool,
-	SALT: process.env.SALT || 'localTest'
+	SALT: process.env.SALT || 'localTest',
 };
