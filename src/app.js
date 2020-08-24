@@ -4,7 +4,7 @@ const app = express();
 const logger = require('morgan');
 require('dotenv').config();
 const config = require('./config');
-const { HTTPStatusCode, ENVIRONMENT } = require('./constants');
+const { HTTP_STATUS_CODE, ENVIRONMENT } = require('./constants');
 
 Sentry.init({
 	dsn: config.SENTRY_DSN,
@@ -26,9 +26,9 @@ app.set('port', config.PORT);
 // Middlewares
 app.use(Sentry.Handlers.requestHandler());
 
-if (config.ENVIRONMENT == ENVIRONMENT.PRODUCTION || config.ENVIRONMENT == ENVIRONMENT.STAGING)
+if ([ENVIRONMENT.PRODUCTION, ENVIRONMENT.STAGING].includes(config.ENVIRONMENT))
 	app.use(logger('short'));
-else if (config.ENVIRONMENT == ENVIRONMENT.DEVELOPMENT || config.ENVIRONMENT == ENVIRONMENT.LOCAL)
+else
 	app.use(logger(':method :url - :response-time ms'));
 
 app.use(express.urlencoded({ extended: false }));
@@ -47,12 +47,12 @@ app.use('/todos', todoRouter);
 
 // Error Handler
 app.use(Sentry.Handlers.errorHandler());
-app.use((req, res, next) => res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' }));
+app.use((req, res, next) => res.status(HTTP_STATUS_CODE.NotFound).json({ message: 'Not Found' }));
 app.use((e, req, res, next) => {
 	if (e.statusCode && e.message)
 		res.status(e.statusCode).json({ message: e.message });
 	else
-		res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+		res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 });
 
 
