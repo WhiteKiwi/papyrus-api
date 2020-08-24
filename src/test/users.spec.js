@@ -23,9 +23,9 @@ describe('POST /users', () => {
 				nickname: testUser.nickname
 			})
 			.expect(201)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -40,9 +40,9 @@ describe('POST /users', () => {
 				nickname: testUser.nickname
 			})
 			.expect(409)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -54,9 +54,9 @@ describe('GET /users/verify-user-id', () => {
 		request(app)
 			.get(`/users/verify-user-id?userID=${testUser.userID}`)
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.OK.should.be.equal(true);
 
@@ -69,9 +69,9 @@ describe('GET /users/verify-user-id', () => {
 		request(app)
 			.get(`/users/verify-user-id?userID=${testUser.userID + 'a'}`)
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.OK.should.be.equal(false);
 
@@ -86,9 +86,9 @@ describe('GET /users/verify-nickname', () => {
 		request(app)
 			.get(`/users/verify-nickname?nickname=${testUser.nickname}`)
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.OK.should.be.equal(false);
 
@@ -101,9 +101,9 @@ describe('GET /users/verify-nickname', () => {
 		request(app)
 			.get(`/users/verify-nickname?nickname=${testUser.nickname + 'a'}`)
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.OK.should.be.equal(true);
 
@@ -122,9 +122,9 @@ describe('POST /users/sign-in', () => {
 				password: testUser.password
 			})
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					accessToken = res.body.accessToken;
 					// refreshToken = res.body.refreshToken;
@@ -141,9 +141,9 @@ describe('GET /users', () => {
 			.get('/users')
 			.expect(200)
 			.set({ 'Authorization': `Bearer ${accessToken}` })
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.userID.should.be.equal(testUser.userID);
 					res.body.nickname.should.be.equal(testUser.nickname);
@@ -163,9 +163,9 @@ describe('DELETE /users', () => {
 				password: testUser.password + '2'
 			})
 			.expect(401)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -179,9 +179,9 @@ describe('DELETE /users', () => {
 				password: testUser.password
 			})
 			.expect(204)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});

@@ -7,9 +7,9 @@ describe('GET /', () => {
 		request(app)
 			.get('/')
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					// result Text must be 'Hello, world!'
 					res.text.should.be.equal('Hello, world!');

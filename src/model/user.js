@@ -29,8 +29,8 @@ class UserRepository {
 			const [rows] = await connection.query(query, values);
 
 			return rows[0];
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}
@@ -47,8 +47,8 @@ class UserRepository {
 			const [rows] = await connection.query(query, values);
 
 			return rows[0];
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}
@@ -65,8 +65,8 @@ class UserRepository {
 			const [rows] = await connection.query(query, values);
 
 			return rows[0];
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}
@@ -84,9 +84,9 @@ class UserRepository {
 			const [results] = await connection.query(query, values);
 
 			return results.affectedRows > 0 ? true : false;
-		} catch (err) {
-			Sentry.captureException(err);
-			throw err;
+		} catch (e) {
+			Sentry.captureException(e);
+			throw e;
 		} finally {
 			connection.release();
 		}
@@ -116,8 +116,8 @@ class UserRepository {
 			const [results] = await connection.query(query, values);
 
 			return results.affectedRows > 0 ? true : false;
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}

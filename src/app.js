@@ -47,9 +47,9 @@ app.use('/todos', todoRouter);
 // Error Handler
 app.use(Sentry.Handlers.errorHandler());
 app.use((req, res, next) => res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' }));
-app.use((err, req, res, next) => {
-	if (err.statusCode && err.message)
-		res.status(err.statusCode).json({ message: err.message });
+app.use((e, req, res, next) => {
+	if (e.statusCode && e.message)
+		res.status(e.statusCode).json({ message: e.message });
 	else
 		res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 });

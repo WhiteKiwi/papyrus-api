@@ -14,8 +14,8 @@ module.exports = {
 				res.json(user);
 			else
 				res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' });
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -33,11 +33,11 @@ module.exports = {
 				res.status(HTTPStatusCode.Created).json({});
 			else
 				res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
-		} catch (err) {
-			if (err.errno === 1062) { // MySql Error No.
+		} catch (e) {
+			if (e.errno === 1062) { // MySql Error No.
 				res.status(HTTPStatusCode.Conflict).json({ message: 'User ID 또는 Nickname이 중복되었습니다.' });
 			} else {
-				console.log(err);
+				console.log(e);
 				res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 			}
 		}
@@ -64,8 +64,8 @@ module.exports = {
 			} else {
 				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Password' });
 			}
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -85,8 +85,8 @@ module.exports = {
 				res.json({ 'OK': true });
 			else
 				res.json({ 'OK': false });
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -105,8 +105,8 @@ module.exports = {
 				res.json({ 'OK': false });
 			else
 				res.json({ 'OK': true });
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -142,8 +142,8 @@ module.exports = {
 			} else {
 				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Information' });
 			}
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},

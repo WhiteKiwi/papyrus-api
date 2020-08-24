@@ -31,8 +31,8 @@ class TodoRepository {
 			});
 
 			return rows;
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}
@@ -52,8 +52,8 @@ class TodoRepository {
 				rows[0].isAchieved = rows[0].isAchieved ? true : false;
 
 			return rows[0];
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}
@@ -70,8 +70,8 @@ class TodoRepository {
 			const [results] = await connection.query(query, values);
 
 			return results.affectedRows > 0 ? true : false;
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}
@@ -99,8 +99,8 @@ class TodoRepository {
 			const [results] = await connection.query(query, values);
 
 			return results.affectedRows > 0 ? true : false;
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}
@@ -117,8 +117,8 @@ class TodoRepository {
 			const [results] = await connection.query(query, values);
 
 			return results.affectedRows > 0 ? true : false;
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 		} finally {
 			connection.release();
 		}

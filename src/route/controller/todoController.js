@@ -10,8 +10,8 @@ module.exports = {
 			const todos = await todoRepository.readAll(req.user.uuid);
 			// TODO: 카테고리, 미해결 등 옵션 추가
 			res.json(todos);
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -29,8 +29,8 @@ module.exports = {
 				res.json(todo);
 			else
 				res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' });
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -48,8 +48,8 @@ module.exports = {
 				res.status(HTTPStatusCode.Created).json({});
 			else
 				res.status(HTTPStatusCode.BadRequest).json({ message: 'Bad Request' });
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -68,8 +68,8 @@ module.exports = {
 				res.status(HTTPStatusCode.NoContent).json({});
 			else
 				res.status(HTTPStatusCode.BadRequest).json({ message: 'Bad Request' });
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
@@ -90,8 +90,8 @@ module.exports = {
 				// 값이 존재하지 않는 요청은 400? 404? => 요청이 잘못됨 - 400
 				res.status(HTTPStatusCode.BadRequest).json({ message: 'Bad Request' });
 			}
-		} catch (err) {
-			Sentry.captureException(err);
+		} catch (e) {
+			Sentry.captureException(e);
 			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	}
