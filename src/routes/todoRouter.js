@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const todoController = require('./controllers/todoController');
+const todoController = require('../controllers/todoController');
 
 // Middleware
-const authChecker = require('../routes/middlewares/authChecker');
+const authChecker = require('../middlewares/authChecker');
 router.use(authChecker);
 
 // Todo API

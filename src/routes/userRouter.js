@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const userController = require('./controllers/userController');
+const userController = require('../controllers/userController');
 
 // Middleware
-const authChecker = require('../routes/middlewares/authChecker');
+const authChecker = require('../middlewares/authChecker');
 router.use(authChecker);
 
 // User API

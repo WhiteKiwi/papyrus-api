@@ -1,8 +1,8 @@
 const Sentry = require('@sentry/node');
-const UserRepository = require('../../repositories/UserRepository');
+const UserRepository = require('../repositories/UserRepository');
 const jwt = require('jsonwebtoken');
-const configs = require('../../configs');
-const { HTTP_STATUS_CODE } = require('../../utils/constants');
+const configs = require('../configs');
+const { HTTP_STATUS_CODE } = require('../utils/constants');
 
 const userRepository = new UserRepository();
 module.exports = {

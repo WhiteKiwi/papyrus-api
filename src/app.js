@@ -1,10 +1,10 @@
 const Sentry = require('@sentry/node');
 const express = require('express');
-const logger = require('morgan');
 const configs = require('./configs');
 const { HTTP_STATUS_CODE, ENVIRONMENT } = require('./utils/constants');
 
 function init(app) {
+	// Sentry setting
 	Sentry.init({
 		dsn: configs.SENTRY.DSN,
 		environment: configs.ENVIRONMENT,
@@ -23,13 +23,13 @@ function init(app) {
 	// Middlewares
 	app.use(Sentry.Handlers.requestHandler());
 
-	if ([ENVIRONMENT.LOCAL, ENVIRONMENT.DEVELOPMENT].includes(configs.ENVIRONMENT))
-		app.use(logger(':method :url - :response-time ms'));
-	else
-		app.use(logger('short'));
-
+	// Body parser
 	app.use(express.urlencoded({ extended: false }));
 	app.use(express.json());
+
+	// Logger
+	const logger = require('./middlewares/logger');
+	app.use(logger);
 
 	// Routers
 	const routers = require('./routes');

@@ -1,6 +1,6 @@
 const Sentry = require('@sentry/node');
-const TodoRepository = require('../../repositories/TodoRepository');
-const { HTTP_STATUS_CODE } = require('../../utils/constants');
+const TodoRepository = require('../repositories/TodoRepository');
+const { HTTP_STATUS_CODE } = require('../utils/constants');
 
 const todoRepository = new TodoRepository();
 module.exports = {

@@ -1,9 +1,10 @@
+const router = require('express').Router();
 const jwt = require('jsonwebtoken');
-const configs = require('../../configs');
-const { HTTP_STATUS_CODE } = require('../../utils/constants');
+const configs = require('../configs');
+const { HTTP_STATUS_CODE } = require('../utils/constants');
 
 // authChecker - jwt token 인증 후 payload에서 user 정보를 뽑아서 req.user에 담아줌
-module.exports = (req, res, next) => {
+router.use((req, res, next) => {
 	if (req.headers.authorization) {
 		const token = req.headers.authorization.split('Bearer ')[1];
 
@@ -22,4 +23,6 @@ module.exports = (req, res, next) => {
 		// TODO: Redirect
 		res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'request\'s Authentication header is empty' });
 	}
-};
+});
+
+module.exports = router;

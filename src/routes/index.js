@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const auth = require('../routes/authRouter');
-const user = require('../routes/userRouter');
-const todo = require('../routes/todoRouter');
+const auth = require('./authRouter');
+const user = require('./userRouter');
+const todo = require('./todoRouter');
 
 router.get('/', (req, res) => res.send('Hello, world!'));
 
