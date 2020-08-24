@@ -1,90 +1,67 @@
 const Sentry = require('@sentry/node');
-const { connectionPool } = require('../configs/database.js');
+const DB = require('../utils/database.js');
 
 // TODO: SQL Injection 방지
 class TodoRepository {
 	constructor() {
-		const self = {};
-
-		self.readAll = this.readAll;
-		self.read = this.read;
-
-		self.create = this.create;
-		
-		self.update = this.update;
-
-		self.delete = this.delete;
-
-		return self;
+		this.db = new DB();
 	}
 
 	async readAll(userUUID) {
-		let connection = await connectionPool.getConnection(async (conn) => conn);
-
 		try {
-			let query = 'SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=?';
-			let values = [userUUID];
-			const [rows] = await connection.query(query, values);
+			const query = 'SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=?';
+			const params = [userUUID];
+			const data = await this.db.query(query, params);
 
-			rows.forEach((row) => {
+			// TODO: 작동 확인
+			data.forEach((row) => {
 				row.isAchieved = row.isAchieved ? true : false;
 			});
 
-			return rows;
+			return data;
 		} catch (e) {
 			Sentry.captureException(e);
-		} finally {
-			connection.release();
 		}
 
 		return null;
 	}
 
 	async read(userUUID, todoUUID) {
-		let connection = await connectionPool.getConnection(async (conn) => conn);
-
 		try {
-			let query = 'SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=? and uuid=?';
-			let values = [userUUID, todoUUID];
-			const [rows] = await connection.query(query, values);
+			const query = 'SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=? and uuid=?';
+			const params = [userUUID, todoUUID];
+			const data = await this.db.query(query, params);
 
-			if (rows[0])
-				rows[0].isAchieved = rows[0].isAchieved ? true : false;
+			if (data[0])
+				data[0].isAchieved = data[0].isAchieved ? true : false;
 
-			return rows[0];
+			return data[0];
 		} catch (e) {
 			Sentry.captureException(e);
-		} finally {
-			connection.release();
 		}
 
 		return null;
 	}
 
 	async create(userUUID, title) {
-		let connection = await connectionPool.getConnection(async (conn) => conn);
-
 		try {
-			let query = 'INSERT INTO todos(title, user_uuid) VALUES(?, ?)';
-			let values = [title, userUUID];
-			const [results] = await connection.query(query, values);
+			const query = 'INSERT INTO todos(title, user_uuid) VALUES(?, ?)';
+			const params = [title, userUUID];
+			const data = await this.db.query(query, params);
 
-			return results.affectedRows > 0 ? true : false;
+			return data.affectedRows > 0 ? true : false;
 		} catch (e) {
 			Sentry.captureException(e);
-		} finally {
-			connection.release();
 		}
 
 		return null;
 	}
 
 	async update(userUUID, todo) {
-		let connection = await connectionPool.getConnection(async (conn) => conn);
-
 		try {
 			let subQuery=[];
 			for(let key in todo) {
+				// TODO: escape for prevent sql injection
 				if (key == 'title') {
 					subQuery.push(`title='${todo[key]}'`);
 				} else if (key == 'isAchieved') {
@@ -94,33 +71,27 @@ class TodoRepository {
 			if (subQuery.length == 0)
 				return false;
 
-			let query = `UPDATE todos SET ${subQuery.join(', ')} where user_uuid=? AND uuid=?`;
-			let values = [userUUID, todo.uuid];
-			const [results] = await connection.query(query, values);
+			const query = `UPDATE todos SET ${subQuery.join(', ')} where user_uuid=? AND uuid=?`;
+			const params = [userUUID, todo.uuid];
+			const data = await this.db.query(query, params);
 
-			return results.affectedRows > 0 ? true : false;
+			return data.affectedRows > 0 ? true : false;
 		} catch (e) {
 			Sentry.captureException(e);
-		} finally {
-			connection.release();
 		}
 
 		return null;
 	}
 
 	async delete(userUUID, todoUUID) {
-		let connection = await connectionPool.getConnection(async (conn) => conn);
-
 		try {
 			const query = 'DELETE from todos where user_uuid=? and uuid=?';
-			const values = [userUUID, todoUUID];
-			const [results] = await connection.query(query, values);
+			const params = [userUUID, todoUUID];
+			const data = await this.db.query(query, params);
 
-			return results.affectedRows > 0 ? true : false;
+			return data.affectedRows > 0 ? true : false;
 		} catch (e) {
 			Sentry.captureException(e);
-		} finally {
-			connection.release();
 		}
 
 		return null;

@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken');
-const { SECRET } = require('../../configs/jwt');
-const { HTTP_STATUS_CODE } = require('../../constants');
+const configs = require('../../configs');
+const { HTTP_STATUS_CODE } = require('../../utils/constants');
 
 // authChecker - jwt token 인증 후 payload에서 user 정보를 뽑아서 req.user에 담아줌
 module.exports = (req, res, next) => {
 	if (req.headers.authorization) {
 		const token = req.headers.authorization.split('Bearer ')[1];
 
-		let user = jwt.verify(token, SECRET);
+		let user = jwt.verify(token, configs.JWT.SECRET);
 		if (user) {
 			req.user = {
 				uuid: user.uuid,	

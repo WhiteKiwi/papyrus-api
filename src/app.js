@@ -1,16 +1,15 @@
 const Sentry = require('@sentry/node');
 const express = require('express');
 const logger = require('morgan');
-require('dotenv').config();
-const config = require('./configs');
-const { HTTP_STATUS_CODE, ENVIRONMENT } = require('./constants');
+const configs = require('./configs');
+const { HTTP_STATUS_CODE, ENVIRONMENT } = require('./utils/constants');
 
 function init(app) {
 	Sentry.init({
-		dsn: config.SENTRY_DSN,
-		environment: config.ENVIRONMENT,
+		dsn: configs.SENTRY.DSN,
+		environment: configs.ENVIRONMENT,
 		beforeSend: (event, hint) => {
-			if ([ENVIRONMENT.LOCAL, ENVIRONMENT.DEVELOPMENT].includes(config.ENVIRONMENT)) {
+			if ([ENVIRONMENT.LOCAL, ENVIRONMENT.DEVELOPMENT].includes(configs.ENVIRONMENT)) {
 				console.error(hint.originalException);
 
 				// this drops the event and nothing will be send to sentry
@@ -24,7 +23,7 @@ function init(app) {
 	// Middlewares
 	app.use(Sentry.Handlers.requestHandler());
 
-	if ([ENVIRONMENT.LOCAL, ENVIRONMENT.DEVELOPMENT].includes(config.ENVIRONMENT))
+	if ([ENVIRONMENT.LOCAL, ENVIRONMENT.DEVELOPMENT].includes(configs.ENVIRONMENT))
 		app.use(logger(':method :url - :response-time ms'));
 	else
 		app.use(logger('short'));
@@ -52,8 +51,8 @@ function init(app) {
 const app = express();
 init(app);
 
-app.listen(config.PORT, () => {
-	console.log('TODO API Server listening on port ' + config.PORT);
+app.listen(configs.PORT, () => {
+	console.log('TODO API Server listening on port ' + configs.PORT);
 });
 
 module.exports = app;
