@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../app');
+const app = require('../src/app');
 require('chai').should();
 
 let accessToken = ['', ''];
@@ -34,16 +34,16 @@ const testTodos = {
 describe('테스트 계정 생성 및 로그인', () => {
 	it('계정1 생성', (done) => {
 		request(app)
-			.post('/users/')
+			.post('/users')
 			.send({
 				userID: testUser[0].userID,
 				password: testUser[0].password,
 				nickname: testUser[0].nickname
 			})
 			.expect(201)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -51,16 +51,16 @@ describe('테스트 계정 생성 및 로그인', () => {
 
 	it('계정2 생성', (done) => {
 		request(app)
-			.post('/users/')
+			.post('/users')
 			.send({
 				userID: testUser[1].userID,
 				password: testUser[1].password,
 				nickname: testUser[1].nickname
 			})
 			.expect(201)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -74,9 +74,9 @@ describe('테스트 계정 생성 및 로그인', () => {
 				password: testUser[0].password
 			})
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					accessToken[0] = res.body.accessToken;
 					// refreshToken = res.body.refreshToken;
@@ -94,9 +94,9 @@ describe('테스트 계정 생성 및 로그인', () => {
 				password: testUser[1].password
 			})
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					accessToken[1] = res.body.accessToken;
 					// refreshToken = res.body.refreshToken;
@@ -108,12 +108,12 @@ describe('테스트 계정 생성 및 로그인', () => {
 
 	it('내 정보 가져오기', (done) => {
 		request(app)
-			.get('/users/')
+			.get('/users')
 			.expect(200)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					testUser[0].uuid = res.body.uuid;
 
@@ -124,12 +124,12 @@ describe('테스트 계정 생성 및 로그인', () => {
 
 	it('내 정보 가져오기', (done) => {
 		request(app)
-			.get('/users/')
+			.get('/users')
 			.expect(200)
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					testUser[1].uuid = res.body.uuid;
 
@@ -149,9 +149,9 @@ describe('POST /todos', () => {
 				title: testTodos['test1'].title
 			})
 			.expect(201)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -165,9 +165,9 @@ describe('POST /todos', () => {
 				title: testTodos['test2'].title
 			})
 			.expect(201)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -181,9 +181,9 @@ describe('POST /todos', () => {
 				title: testTodos['test3'].title
 			})
 			.expect(201)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -196,9 +196,9 @@ describe('GET /todos', () => {
 			.get('/todos')
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.length.should.be.equal(3);
 
@@ -220,9 +220,9 @@ describe('GET /todos/:uuid', () => {
 			.get(`/todos/${testTodos['test1'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					for (let key in res.body) {
 						res.body[key].should.be.equal(testTodos['test1'][key]);
@@ -238,9 +238,9 @@ describe('GET /todos/:uuid', () => {
 			.get(`/todos/${testTodos['test2'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					for (let key in res.body) {
 						res.body[key].should.be.equal(testTodos['test2'][key]);
@@ -256,9 +256,9 @@ describe('GET /todos/:uuid', () => {
 			.get(`/todos/${testTodos['test3'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					for (let key in res.body) {
 						res.body[key].should.be.equal(testTodos['test3'][key]);
@@ -274,9 +274,9 @@ describe('GET /todos/:uuid', () => {
 			.get('/todos/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee')
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.expect(404)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -287,9 +287,9 @@ describe('GET /todos/:uuid', () => {
 			.get(`/todos/${testTodos['test1'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.expect(404)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -305,9 +305,9 @@ describe('PATCH /todos/:uuid', () => {
 				title: 'test1_edited'
 			})
 			.expect(204)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -321,9 +321,9 @@ describe('PATCH /todos/:uuid', () => {
 				isAchieved: true
 			})
 			.expect(204)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -338,9 +338,9 @@ describe('PATCH /todos/:uuid', () => {
 				isAchieved: true
 			})
 			.expect(204)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -352,9 +352,9 @@ describe('PATCH /todos/:uuid', () => {
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({})
 			.expect(400)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -369,9 +369,9 @@ describe('PATCH /todos/:uuid', () => {
 				isAchieved2: true
 			})
 			.expect(400)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -386,9 +386,9 @@ describe('PATCH /todos/:uuid', () => {
 				isAchieved: false
 			})
 			.expect(400)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -403,9 +403,9 @@ describe('PATCH /todos/:uuid', () => {
 				isAchieved: false
 			})
 			.expect(400)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -418,9 +418,9 @@ describe('DELETE /todos/:uuid', () => {
 			.delete(`/todos/${testTodos['test1'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.expect(204)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -431,9 +431,9 @@ describe('DELETE /todos/:uuid', () => {
 			.delete('/todos/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee')
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.expect(400)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -444,9 +444,9 @@ describe('DELETE /todos/:uuid', () => {
 			.delete(`/todos/${testTodos['test2'].uuid}`)
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.expect(400)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -456,15 +456,15 @@ describe('DELETE /todos/:uuid', () => {
 describe('테스트 계정 삭제', () => {
 	it('계정1 삭제', (done) => {
 		request(app)
-			.delete('/users/')
+			.delete('/users')
 			.set({ 'Authorization': `Bearer ${accessToken[0]}` })
 			.send({
 				password: testUser[0].password
 			})
 			.expect(204)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -472,15 +472,15 @@ describe('테스트 계정 삭제', () => {
 
 	it('계정2 삭제', (done) => {
 		request(app)
-			.delete('/users/')
+			.delete('/users')
 			.set({ 'Authorization': `Bearer ${accessToken[1]}` })
 			.send({
 				password: testUser[1].password
 			})
 			.expect(204)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});

@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../app');
+const app = require('../src/app');
 require('chai').should();
 
 const testUser = {
@@ -23,9 +23,9 @@ describe('POST /users', () => {
 				nickname: testUser.nickname
 			})
 			.expect(201)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -40,9 +40,9 @@ describe('POST /users', () => {
 				nickname: testUser.nickname
 			})
 			.expect(409)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -54,9 +54,9 @@ describe('GET /users/verify-user-id', () => {
 		request(app)
 			.get(`/users/verify-user-id?userID=${testUser.userID}`)
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.OK.should.be.equal(true);
 
@@ -69,9 +69,9 @@ describe('GET /users/verify-user-id', () => {
 		request(app)
 			.get(`/users/verify-user-id?userID=${testUser.userID + 'a'}`)
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.OK.should.be.equal(false);
 
@@ -86,9 +86,9 @@ describe('GET /users/verify-nickname', () => {
 		request(app)
 			.get(`/users/verify-nickname?nickname=${testUser.nickname}`)
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.OK.should.be.equal(false);
 
@@ -101,9 +101,9 @@ describe('GET /users/verify-nickname', () => {
 		request(app)
 			.get(`/users/verify-nickname?nickname=${testUser.nickname + 'a'}`)
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.OK.should.be.equal(true);
 
@@ -122,9 +122,9 @@ describe('POST /users/sign-in', () => {
 				password: testUser.password
 			})
 			.expect(200)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					accessToken = res.body.accessToken;
 					// refreshToken = res.body.refreshToken;
@@ -135,15 +135,15 @@ describe('POST /users/sign-in', () => {
 	});
 });
 
-describe('GET /users/', () => {
+describe('GET /users', () => {
 	it('내 정보 가져오기', (done) => {
 		request(app)
-			.get('/users/')
+			.get('/users')
 			.expect(200)
 			.set({ 'Authorization': `Bearer ${accessToken}` })
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else {
 					res.body.userID.should.be.equal(testUser.userID);
 					res.body.nickname.should.be.equal(testUser.nickname);
@@ -154,18 +154,18 @@ describe('GET /users/', () => {
 	});
 });
 
-describe('DELETE /users/', () => {
+describe('DELETE /users', () => {
 	it('회원탈퇴 - Incorrect Password', (done) => {
 		request(app)
-			.delete('/users/')
+			.delete('/users')
 			.set({ 'Authorization': `Bearer ${accessToken}` })
 			.send({
 				password: testUser.password + '2'
 			})
 			.expect(401)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});
@@ -173,15 +173,15 @@ describe('DELETE /users/', () => {
 
 	it('회원탈퇴', (done) => {
 		request(app)
-			.delete('/users/')
+			.delete('/users')
 			.set({ 'Authorization': `Bearer ${accessToken}` })
 			.send({
 				password: testUser.password
 			})
 			.expect(204)
-			.end((err, res) => {
-				if (err)
-					done(err);
+			.end((e, res) => {
+				if (e)
+					done(e);
 				else
 					done();
 			});

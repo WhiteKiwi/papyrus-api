@@ -5,7 +5,7 @@
 # Tech Stack
 #### Backend
 - Node.js
-- Express - Applied MVC(Actually MC) & Repository Pattern
+- Express - Applied RC(Repository Controller) Pattern
 #### DB
 - MySQL
 #### Error Tracking

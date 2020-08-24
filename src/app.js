@@ -1,60 +1,58 @@
-const express = require('express');
-const app = express();
-const config = require('./config');
-const { HTTPStatusCode, ENVIRONMENT } = require('./constants');
-const logger = require('morgan');
 const Sentry = require('@sentry/node');
-Sentry.init({
-	dsn: config.SENTRY_DSN,
-	environment: config.ENVIRONMENT,
-	beforeSend: event => {
-		if (config.ENVIRONMENT == ENVIRONMENT.LOCAL || config.ENVIRONMENT == ENVIRONMENT.DEVELOPMENT) {
-			console.error(event);
-			// this drops the event and nothing will be send to sentry
-			return null;
+const express = require('express');
+const configs = require('./configs');
+const { HTTP_STATUS_CODE, ENVIRONMENT } = require('./utils/constants');
+
+function init(app) {
+	// Sentry setting
+	Sentry.init({
+		dsn: configs.SENTRY.DSN,
+		environment: configs.ENVIRONMENT,
+		beforeSend: (event, hint) => {
+			if ([ENVIRONMENT.LOCAL, ENVIRONMENT.DEVELOPMENT].includes(configs.ENVIRONMENT)) {
+				console.error(hint.originalException);
+
+				// this drops the event and nothing will be send to sentry
+				return null;
+			}
+	
+			return event;
 		}
-		
-		return event;
-	}
-});
+	});
 
-app.set('port', config.PORT);
+	// Middlewares
+	app.use(Sentry.Handlers.requestHandler());
 
-// Middlewares
-app.use(Sentry.Handlers.requestHandler());
+	// Body parser
+	app.use(express.urlencoded({ extended: false }));
+	app.use(express.json());
 
-if (config.ENVIRONMENT == ENVIRONMENT.PRODUCTION || config.ENVIRONMENT == ENVIRONMENT.STAGING)
-	app.use(logger('short'));
-else if (config.ENVIRONMENT == ENVIRONMENT.DEVELOPMENT || config.ENVIRONMENT == ENVIRONMENT.LOCAL)
-	app.use(logger(':method :url - :response-time ms'));
+	// Logger
+	const logger = require('./middlewares/logger');
+	app.use(logger);
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+	// Routers
+	const routers = require('./routes');
+	app.use(routers);
 
-// Routers
-const indexRouter = require('./route/indexRouter');
-const authRouter = require('./route/authRouter');
-const userRouter = require('./route/userRouter');
-const todoRouter = require('./route/todoRouter');
+	// Error Handlers
+	app.use(Sentry.Handlers.errorHandler());
+	app.use((req, res, next) => res.status(HTTP_STATUS_CODE.NotFound).json({ message: 'Not Found' }));
+	app.use((e, req, res, next) => {
+		if (e.statusCode && e.message)
+			res.status(e.statusCode).json({ message: e.message });
+		else {
+			Sentry.captureException(e);
+			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
+		}
+	});
+}
 
-app.use(indexRouter);
-app.use('/users', authRouter);
-app.use('/users', userRouter);
-app.use('/todos', todoRouter);
+const app = express();
+init(app);
 
-// Error Handler
-app.use(Sentry.Handlers.errorHandler());
-app.use((req, res, next) => res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found'}));
-app.use((err, req, res, next) => {
-	if (err.statusCode && err.message)
-		res.status(err.statusCode).json({ message: err.message });
-	else
-		res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
-});
-
-
-app.listen(app.get('port'), () => {
-	console.log('TODO API Server listening on port ' + app.get('port'));
+app.listen(configs.PORT, () => {
+	console.log('TODO API Server listening on port ' + configs.PORT);
 });
 
 module.exports = app;

@@ -1,8 +1,8 @@
 const Sentry = require('@sentry/node');
-const UserRepository = require('../../model/user');
+const UserRepository = require('../repositories/UserRepository');
 const jwt = require('jsonwebtoken');
-const { secret } = require('../../config/jwt');
-const { HTTPStatusCode } = require('../../constants');
+const configs = require('../configs');
+const { HTTP_STATUS_CODE } = require('../utils/constants');
 
 const userRepository = new UserRepository();
 module.exports = {
@@ -13,32 +13,34 @@ module.exports = {
 			if (user)
 				res.json(user);
 			else
-				res.status(HTTPStatusCode.NotFound).json({ message: 'Not Found' });
-		} catch (err) {
-			Sentry.captureException(err);
-			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+				res.status(HTTP_STATUS_CODE.NotFound).json({ message: 'Not Found' });
+		} catch (e) {
+			Sentry.captureException(e);
+			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// POST /users
 	postUser: async (req, res) => {
 		const [userID, password, nickname] = [req.body.userID, req.body.password, req.body.nickname];
 		if ([userID, password, nickname].includes(undefined)) {
-			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
+			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
 		try {
 			const isSuccess = await userRepository.create(userID, password, nickname);
 			if (isSuccess)
-				res.status(HTTPStatusCode.Created).json({});
-			else
-				res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
-		} catch (err) {
-			if (err.errno === 1062) { // MySql Error No.
-				res.status(HTTPStatusCode.Conflict).json({ message: 'User ID 또는 Nickname이 중복되었습니다.' });
+				res.status(HTTP_STATUS_CODE.Created).json({});
+			else {
+				Sentry.captureMessage(`유저 생성 실패 for ID: ${userID}, Nickname: ${nickname}`);
+				res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
+			}
+		} catch (e) {
+			if (e.code === 1062) {
+				res.status(HTTP_STATUS_CODE.Conflict).json({ message: e.message });
 			} else {
-				console.log(err);
-				res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+				Sentry.captureException(e);
+				res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 			}
 		}
 	},
@@ -50,8 +52,8 @@ module.exports = {
 	// DELETE /users
 	deleteUser: async (req, res) => {
 		const password = req.body.password;
-		if (password == null) {
-			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
+		if (password == undefined) {
+			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
@@ -60,21 +62,20 @@ module.exports = {
 			const isSuccess = await userRepository.delete(req.user.userID, password);
 			if (isSuccess) {
 				// TODO: Token 거부리스트 구현
-				res.status(HTTPStatusCode.NoContent).json({});
+				res.status(HTTP_STATUS_CODE.NoContent).json({});
 			} else {
-				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Password' });
+				res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Password' });
 			}
-		} catch (err) {
-			Sentry.captureException(err);
-			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+		} catch (e) {
+			Sentry.captureException(e);
+			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
-	// TODO: verify로 url 변경
 	// GET /users/verify-user-id - User ID 중복 여부 검사
 	verifyUserID: async (req, res) => {
 		const userID = req.query.userID;
-		if (userID == null) {
-			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
+		if (userID == undefined) {
+			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
@@ -85,16 +86,16 @@ module.exports = {
 				res.json({ 'OK': true });
 			else
 				res.json({ 'OK': false });
-		} catch (err) {
-			Sentry.captureException(err);
-			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+		} catch (e) {
+			Sentry.captureException(e);
+			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// GET /users/verify-nickname - 닉네임 중복 여부 검사
 	verifyNickname: async (req, res) => {
 		const nickname = req.query.nickname;
-		if (nickname == null) {
-			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
+		if (nickname == undefined) {
+			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
@@ -105,9 +106,9 @@ module.exports = {
 				res.json({ 'OK': false });
 			else
 				res.json({ 'OK': true });
-		} catch (err) {
-			Sentry.captureException(err);
-			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+		} catch (e) {
+			Sentry.captureException(e);
+			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// PATCH /users/change-password - Password 변경 API
@@ -119,7 +120,7 @@ module.exports = {
 	signIn: async (req, res) => {
 		const [userID, password] = [req.body.userID, req.body.password];
 		if ([userID, password].includes(undefined)) {
-			res.status(HTTPStatusCode.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
+			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
 
@@ -131,7 +132,7 @@ module.exports = {
 					userID: user.userID,
 					nickname: user.nickname
 				};
-				let token = jwt.sign(payload, secret, { expiresIn: '7d' });
+				let token = jwt.sign(payload, configs.JWT.SECRET, { expiresIn: '7d' });
 
 				// TODO: refresh Token도 구현하기
 				// TODO: Mongo DB에 Session 저장 및 검증
@@ -140,11 +141,11 @@ module.exports = {
 					'refreshToken': ''
 				});
 			} else {
-				res.status(HTTPStatusCode.Unauthorized).json({ message: 'Incorrect Information' });
+				res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Information' });
 			}
-		} catch (err) {
-			Sentry.captureException(err);
-			res.status(HTTPStatusCode.InternalServerError).json({ message: 'Internal Server Error' });
+		} catch (e) {
+			Sentry.captureException(e);
+			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// GET /users/sign-out - 로그아웃

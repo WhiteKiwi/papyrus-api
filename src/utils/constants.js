@@ -1,4 +1,4 @@
-const HTTPStatusCode = {
+const HTTP_STATUS_CODE = {
 	OK: 200,
 	Created: 201,
 	NoContent: 204,
@@ -11,6 +11,7 @@ const HTTPStatusCode = {
 
 	InternalServerError: 500,
 };
+
 const ENVIRONMENT = {
 	LOCAL: 'LOCAL',
 	DEVELOPMENT: 'DEVELOPMENT',
@@ -18,7 +19,10 @@ const ENVIRONMENT = {
 	PRODUCTION: 'PRODUCTION',
 };
 
+const Q = '?';
+
 module.exports = {
-	HTTPStatusCode,
+	HTTP_STATUS_CODE,
 	ENVIRONMENT,
+	Q,
 };
