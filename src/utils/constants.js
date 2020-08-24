@@ -19,7 +19,10 @@ const ENVIRONMENT = {
 	PRODUCTION: 'PRODUCTION',
 };
 
+const Q = '?';
+
 module.exports = {
 	HTTP_STATUS_CODE,
 	ENVIRONMENT,
+	Q,
 };

@@ -1,5 +1,6 @@
 const Sentry = require('@sentry/node');
-const DB = require('../utils/database.js');
+const DB = require('../utils/database');
+const { Q } = require('../utils/constants');
 
 // TODO: SQL Injection 방지
 class TodoRepository {
@@ -9,7 +10,7 @@ class TodoRepository {
 
 	async readAll(userUUID) {
 		try {
-			const query = 'SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=?';
+			const query = `SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=${Q}`;
 			const params = [userUUID];
 			const data = await this.db.query(query, params);
 
@@ -28,7 +29,7 @@ class TodoRepository {
 
 	async read(userUUID, todoUUID) {
 		try {
-			const query = 'SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=? and uuid=?';
+			const query = `SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=${Q} and uuid=${Q}`;
 			const params = [userUUID, todoUUID];
 			const data = await this.db.query(query, params);
 
@@ -45,7 +46,7 @@ class TodoRepository {
 
 	async create(userUUID, title) {
 		try {
-			const query = 'INSERT INTO todos(title, user_uuid) VALUES(?, ?)';
+			const query = `INSERT INTO todos(title, user_uuid) VALUES(${Q}, ${Q})`;
 			const params = [title, userUUID];
 			const data = await this.db.query(query, params);
 
@@ -71,7 +72,7 @@ class TodoRepository {
 			if (subQuery.length == 0)
 				return false;
 
-			const query = `UPDATE todos SET ${subQuery.join(', ')} where user_uuid=? AND uuid=?`;
+			const query = `UPDATE todos SET ${subQuery.join(', ')} where user_uuid=${Q} AND uuid=${Q}`;
 			const params = [userUUID, todo.uuid];
 			const data = await this.db.query(query, params);
 
@@ -85,7 +86,7 @@ class TodoRepository {
 
 	async delete(userUUID, todoUUID) {
 		try {
-			const query = 'DELETE from todos where user_uuid=? and uuid=?';
+			const query = `DELETE from todos where user_uuid=${Q} and uuid=${Q}`;
 			const params = [userUUID, todoUUID];
 			const data = await this.db.query(query, params);
 
