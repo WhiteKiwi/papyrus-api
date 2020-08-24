@@ -1,8 +1,8 @@
-const Sentry = require('@sentry/node');
 const sha256 = require('sha256');
 const configs = require('../configs');
 const DB = require('../utils/database');
 const { Q } = require('../utils/constants');
+const errorGenerator = require('../utils/error-gen');
 
 class UserRepository {
 	constructor() {
@@ -10,45 +10,27 @@ class UserRepository {
 	}
 
 	async readByUserID(userID) {
-		try {
-			const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} LIMIT 1`;
-			const params = [userID];
-			const data = await this.db.query(query, params);
+		const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} LIMIT 1`;
+		const params = [userID];
+		const data = await this.db.query(query, params);
 
-			return data[0];
-		} catch (e) {
-			Sentry.captureException(e);
-		}
-
-		return null;
+		return data[0];
 	}
 
 	async readByNickname(nickname) {
-		try {
-			const query = `SELECT uuid, user_id as userID, password, nickname from users where nickname=${Q} LIMIT 1`;
-			const params = [nickname];
-			const data = await this.db.query(query, params);
+		const query = `SELECT uuid, user_id as userID, password, nickname from users where nickname=${Q} LIMIT 1`;
+		const params = [nickname];
+		const data = await this.db.query(query, params);
 
-			return data[0];
-		} catch (e) {
-			Sentry.captureException(e);
-		}
-
-		return null;
+		return data[0];
 	}
 
 	async readByUserIDAndPassword(userID, password) {
-		try {
-			const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} and password=${Q} LIMIT 1`;
-			const params = [userID, sha256(password + configs.MYSQL.SALT)];
-			const data = await this.db.query(query, params);
+		const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} and password=${Q} LIMIT 1`;
+		const params = [userID, sha256(password + configs.MYSQL.SALT)];
+		const data = await this.db.query(query, params);
 
-			return data[0];
-		} catch (e) {
-			Sentry.captureException(e);
-		}
-
-		return null;
+		return data[0];
 	}
 
 	async create(userID, password, nickname) {
@@ -60,8 +42,10 @@ class UserRepository {
 
 			return data.affectedRows > 0 ? true : false;
 		} catch (e) {
-			Sentry.captureException(e);
-			throw e;
+			if (e.errno === 1062) { // MySql Error No.
+				throw errorGenerator(1062, 'User ID 또는 Nickname이 중복되었습니다.');
+			} else
+				throw e;
 		}
 	}
 
@@ -81,17 +65,11 @@ class UserRepository {
 	}
 
 	async delete(userID, password) {
-		try {
-			const query = `DELETE from users where user_id=${Q} and password=${Q}`;
-			const params = [userID, sha256(password + configs.MYSQL.SALT)];
-			const data = await this.db.query(query, params);
+		const query = `DELETE from users where user_id=${Q} and password=${Q}`;
+		const params = [userID, sha256(password + configs.MYSQL.SALT)];
+		const data = await this.db.query(query, params);
 
-			return data.affectedRows > 0 ? true : false;
-		} catch (e) {
-			Sentry.captureException(e);
-		}
-
-		return null;
+		return data.affectedRows > 0 ? true : false;
 	}
 }
 

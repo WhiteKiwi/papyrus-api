@@ -31,13 +31,15 @@ module.exports = {
 			const isSuccess = await userRepository.create(userID, password, nickname);
 			if (isSuccess)
 				res.status(HTTP_STATUS_CODE.Created).json({});
-			else
+			else {
+				Sentry.captureMessage(`유저 생성 실패 for ID: ${userID}, Nickname: ${nickname}`);
 				res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
+			}
 		} catch (e) {
-			if (e.errno === 1062) { // MySql Error No.
-				res.status(HTTP_STATUS_CODE.Conflict).json({ message: 'User ID 또는 Nickname이 중복되었습니다.' });
+			if (e.code === 1062) {
+				res.status(HTTP_STATUS_CODE.Conflict).json({ message: e.message });
 			} else {
-				console.log(e);
+				Sentry.captureException(e);
 				res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 			}
 		}
@@ -50,7 +52,7 @@ module.exports = {
 	// DELETE /users
 	deleteUser: async (req, res) => {
 		const password = req.body.password;
-		if (password == null) {
+		if (password == undefined) {
 			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
@@ -72,7 +74,7 @@ module.exports = {
 	// GET /users/verify-user-id - User ID 중복 여부 검사
 	verifyUserID: async (req, res) => {
 		const userID = req.query.userID;
-		if (userID == null) {
+		if (userID == undefined) {
 			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
@@ -92,7 +94,7 @@ module.exports = {
 	// GET /users/verify-nickname - 닉네임 중복 여부 검사
 	verifyNickname: async (req, res) => {
 		const nickname = req.query.nickname;
-		if (nickname == null) {
+		if (nickname == undefined) {
 			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}

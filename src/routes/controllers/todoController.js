@@ -18,7 +18,7 @@ module.exports = {
 	// GET /todos/:uuid
 	getTodo: async (req, res) => {
 		const todoUUID = req.params.uuid;
-		if (todoUUID == null) {
+		if (todoUUID == undefined) {
 			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
@@ -37,7 +37,7 @@ module.exports = {
 	// POST /todos
 	postTodo: async (req, res) => {
 		const title = req.body.title;
-		if (title == null) {
+		if (title == undefined) {
 			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
@@ -76,7 +76,7 @@ module.exports = {
 	// DELETE /todos/:uuid
 	deleteTodo: async (req, res) => {
 		const todoUUID = req.params.uuid;
-		if (todoUUID == null) {
+		if (todoUUID == undefined) {
 			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
 			return;
 		}
