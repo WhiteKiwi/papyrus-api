@@ -51,8 +51,10 @@ app.use((req, res, next) => res.status(HTTP_STATUS_CODE.NotFound).json({ message
 app.use((e, req, res, next) => {
 	if (e.statusCode && e.message)
 		res.status(e.statusCode).json({ message: e.message });
-	else
+	else {
+		Sentry.captureException(e);
 		res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
+	}
 });
 
 
