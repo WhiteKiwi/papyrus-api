@@ -2,7 +2,6 @@ const Sentry = require('@sentry/node');
 const DB = require('../utils/database');
 const { Q } = require('../utils/constants');
 
-// TODO: SQL Injection 방지
 class TodoRepository {
 	constructor() {
 		this.db = new DB();
@@ -60,20 +59,24 @@ class TodoRepository {
 
 	async update(userUUID, todo) {
 		try {
+			const params = [];
+			
 			let subQuery=[];
 			for(let key in todo) {
-				// TODO: escape for prevent sql injection
 				if (key == 'title') {
-					subQuery.push(`title='${todo[key]}'`);
+					subQuery.push(`title=${Q}`);
+					params.push(todo[key]);
 				} else if (key == 'isAchieved') {
-					subQuery.push(`is_achieved='${todo[key] == true ? 1 : 0}'`);
+					subQuery.push(`is_achieved=${Q}`);
+					params.push(todo[key] == true ? 1 : 0);
 				}
 			}
 			if (subQuery.length == 0)
 				return false;
 
 			const query = `UPDATE todos SET ${subQuery.join(', ')} where user_uuid=${Q} AND uuid=${Q}`;
-			const params = [userUUID, todo.uuid];
+			params.push(userUUID);
+			params.push(todo.uuid);
 			const data = await this.db.query(query, params);
 
 			return data.affectedRows > 0 ? true : false;

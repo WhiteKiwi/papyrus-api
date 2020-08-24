@@ -69,7 +69,6 @@ module.exports = {
 			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
-	// TODO: verify로 url 변경
 	// GET /users/verify-user-id - User ID 중복 여부 검사
 	verifyUserID: async (req, res) => {
 		const userID = req.query.userID;
