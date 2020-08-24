@@ -1,5 +1,5 @@
 const Sentry = require('@sentry/node');
-const { connectionPool } = require('../config/database.js');
+const { connectionPool } = require('../configs/database.js');
 
 // TODO: SQL Injection 방지
 class TodoRepository {

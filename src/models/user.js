@@ -1,5 +1,5 @@
 const Sentry = require('@sentry/node');
-const { connectionPool, SALT } = require('../config/database.js');
+const { connectionPool, SALT } = require('../configs/database.js');
 const sha256 = require('sha256');
 
 class UserRepository {

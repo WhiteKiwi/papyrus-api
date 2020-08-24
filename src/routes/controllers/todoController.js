@@ -1,5 +1,5 @@
 const Sentry = require('@sentry/node');
-const TodoRepository = require('../../model/todo');
+const TodoRepository = require('../../models/todo');
 const { HTTP_STATUS_CODE } = require('../../constants');
 
 const todoRepository = new TodoRepository();

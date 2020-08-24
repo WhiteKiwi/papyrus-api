@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { SECRET } = require('../../config/jwt');
+const { SECRET } = require('../../configs/jwt');
 const { HTTP_STATUS_CODE } = require('../../constants');
 
 // authChecker - jwt token 인증 후 payload에서 user 정보를 뽑아서 req.user에 담아줌

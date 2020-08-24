@@ -2,7 +2,7 @@ const Sentry = require('@sentry/node');
 const express = require('express');
 const logger = require('morgan');
 require('dotenv').config();
-const config = require('./config');
+const config = require('./configs');
 const { HTTP_STATUS_CODE, ENVIRONMENT } = require('./constants');
 
 function init(app) {
@@ -33,7 +33,7 @@ function init(app) {
 	app.use(express.json());
 
 	// Routers
-	const routers = require('./route');
+	const routers = require('./routes');
 	app.use(routers);
 
 	// Error Handlers
