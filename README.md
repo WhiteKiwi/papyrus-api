@@ -1,5 +1,5 @@
-<h1 align="center">Todolist-Server</h1>
-<p align="center">The API Server for Todolist services. </p>
+<h1 align="center">papyrus-api</h1>
+<p align="center">The API Server for Papyrus services. </p>
 
 
 # Tech Stack
@@ -18,7 +18,7 @@
 - shoud
 - super
 #### Lint
-- eslint - [The applied lint rules](https://github.com/WhiteKiwi/Todolist-Server/blob/master/.eslintrc.js)
+- eslint - [The applied lint rules](https://github.com/WhiteKiwi/papyrus-api/blob/master/.eslintrc.js)
 #### CI/CD
 - Github Actions
 - Heroku
@@ -31,7 +31,7 @@
 # Run in local environment
 #### 1. Clone repository
 ```
-git clone https://github.com/whitekiwi/Todolist-Server
+git clone https://github.com/whitekiwi/papyrus-api
 ```
 
 #### 2. Install modules

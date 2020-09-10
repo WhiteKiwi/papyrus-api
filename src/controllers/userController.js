@@ -80,12 +80,9 @@ module.exports = {
 		}
 
 		try {
-			const user = await userRepository.readByUserID(userID);
+			const isOK = await userRepository.verifyUserID(userID);
 
-			if (user)
-				res.json({ 'OK': true });
-			else
-				res.json({ 'OK': false });
+			res.json({ 'isOK': isOK });
 		} catch (e) {
 			Sentry.captureException(e);
 			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
@@ -100,12 +97,9 @@ module.exports = {
 		}
 
 		try {
-			const user = await userRepository.readByNickname(nickname);
+			const isOK = await userRepository.verifyNickname(nickname);
 
-			if (user)
-				res.json({ 'OK': false });
-			else
-				res.json({ 'OK': true });
+			res.json({ 'isOK': isOK });
 		} catch (e) {
 			Sentry.captureException(e);
 			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
@@ -125,7 +119,7 @@ module.exports = {
 		}
 
 		try {
-			const user = await userRepository.readByUserIDAndPassword(userID, password);
+			const user = await userRepository.verify(userID, password);
 			if (user) {
 				let payload = {
 					uuid: user.uuid,

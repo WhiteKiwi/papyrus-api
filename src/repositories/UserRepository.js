@@ -25,7 +25,7 @@ class UserRepository {
 		return data[0];
 	}
 
-	async readByUserIDAndPassword(userID, password) {
+	async verify(userID, password) {
 		const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} and password=${Q} LIMIT 1`;
 		const params = [userID, sha256(password + configs.MYSQL.SALT)];
 		const data = await this.db.query(query, params);
@@ -70,6 +70,22 @@ class UserRepository {
 		const data = await this.db.query(query, params);
 
 		return data.affectedRows > 0 ? true : false;
+	}
+
+	async verifyUserID(userID) {
+		const query = `SELECT EXISTS (select * from users where user_id=${Q}) as success`;
+		const params = [userID];
+		const data = await this.db.query(query, params);
+
+		return data[0].success == 0;
+	}
+
+	async verifyNickname(nickname) {
+		const query = `SELECT EXISTS (select * from users where nickname=${Q}) as success`;
+		const params = [nickname];
+		const data = await this.db.query(query, params);
+
+		return data[0].success == 0;
 	}
 }
 
