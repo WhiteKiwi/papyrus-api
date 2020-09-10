@@ -79,6 +79,14 @@ class UserRepository {
 
 		return data[0].success == 0;
 	}
+
+	async verifyNickname(nickname) {
+		const query = `SELECT EXISTS (select * from users where nickname=${Q}) as success`;
+		const params = [nickname];
+		const data = await this.db.query(query, params);
+
+		return data[0].success == 0;
+	}
 }
 
 module.exports = UserRepository;

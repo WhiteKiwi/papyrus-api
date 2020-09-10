@@ -97,12 +97,9 @@ module.exports = {
 		}
 
 		try {
-			const user = await userRepository.readByNickname(nickname);
+			const isOK = await userRepository.verifyNickname(nickname);
 
-			if (user)
-				res.json({ 'OK': false });
-			else
-				res.json({ 'OK': true });
+			res.json({ 'isOK': isOK });
 		} catch (e) {
 			Sentry.captureException(e);
 			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
