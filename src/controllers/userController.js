@@ -119,7 +119,7 @@ module.exports = {
 		}
 
 		try {
-			const user = await userRepository.readByUserIDAndPassword(userID, password);
+			const user = await userRepository.verify(userID, password);
 			if (user) {
 				let payload = {
 					uuid: user.uuid,

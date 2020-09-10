@@ -25,7 +25,7 @@ class UserRepository {
 		return data[0];
 	}
 
-	async readByUserIDAndPassword(userID, password) {
+	async verify(userID, password) {
 		const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} and password=${Q} LIMIT 1`;
 		const params = [userID, sha256(password + configs.MYSQL.SALT)];
 		const data = await this.db.query(query, params);
