@@ -82,7 +82,7 @@ module.exports = {
 		try {
 			const isOK = await userRepository.verifyUserID(userID);
 
-			res.json({ 'OK': isOK });
+			res.json({ 'isOK': isOK });
 		} catch (e) {
 			Sentry.captureException(e);
 			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
