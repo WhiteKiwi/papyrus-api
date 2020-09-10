@@ -58,7 +58,7 @@ describe('GET /users/verify-user-id', () => {
 				if (e)
 					done(e);
 				else {
-					res.body.OK.should.be.equal(true);
+					res.body.isOK.should.be.equal(false);
 
 					done();
 				}
@@ -73,7 +73,7 @@ describe('GET /users/verify-user-id', () => {
 				if (e)
 					done(e);
 				else {
-					res.body.OK.should.be.equal(false);
+					res.body.isOK.should.be.equal(true);
 
 					done();
 				}
@@ -90,7 +90,7 @@ describe('GET /users/verify-nickname', () => {
 				if (e)
 					done(e);
 				else {
-					res.body.OK.should.be.equal(false);
+					res.body.isOK.should.be.equal(false);
 
 					done();
 				}
@@ -105,7 +105,7 @@ describe('GET /users/verify-nickname', () => {
 				if (e)
 					done(e);
 				else {
-					res.body.OK.should.be.equal(true);
+					res.body.isOK.should.be.equal(true);
 
 					done();
 				}
