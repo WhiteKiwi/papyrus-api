@@ -1,5 +1,5 @@
 {
-  "name": "todolist-server",
+  "name": "papyrus-api",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WhiteKiwi/Todolist-Server.git"
+    "url": "git+https://github.com/WhiteKiwi/papyrus-api.git"
   },
-  "author": "Kiwi",
+  "author": "whitekiwi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/WhiteKiwi/Todolist-Server/issues"
+    "url": "https://github.com/WhiteKiwi/papyrus-api/issues"
   },
-  "homepage": "https://github.com/WhiteKiwi/Todolist-Server#readme",
+  "homepage": "https://github.com/WhiteKiwi/papyrus-api#readme",
   "dependencies": {
     "@sentry/node": "^5.19.2",
     "bluebird": "^3.7.2",
