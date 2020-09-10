@@ -71,6 +71,14 @@ class UserRepository {
 
 		return data.affectedRows > 0 ? true : false;
 	}
+
+	async verifyUserID(userID) {
+		const query = `SELECT EXISTS (select * from users where user_id=${Q}) as success`;
+		const params = [userID];
+		const data = await this.db.query(query, params);
+
+		return data[0].success == 0;
+	}
 }
 
 module.exports = UserRepository;
