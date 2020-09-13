@@ -7,7 +7,10 @@ class TodoRepository {
 	}
 
 	async readAll(userUUID) {
-		const query = `SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=${Q}`;
+		const query = `\
+			SELECT uuid, title, is_achieved as isAchieved \
+			FROM todos \
+			WHERE user_uuid=${Q}`;
 		const params = [userUUID];
 		const data = await this.db.query(query, params);
 
@@ -20,7 +23,10 @@ class TodoRepository {
 	}
 
 	async read(userUUID, todoUUID) {
-		const query = `SELECT uuid, title, is_achieved as isAchieved from todos where user_uuid=${Q} and uuid=${Q}`;
+		const query = `\
+			SELECT uuid, title, is_achieved as isAchieved \
+			FROM todos \
+			WHERE user_uuid=${Q} and uuid=${Q}`;
 		const params = [userUUID, todoUUID];
 		const data = await this.db.query(query, params);
 
@@ -31,7 +37,9 @@ class TodoRepository {
 	}
 
 	async create(userUUID, title) {
-		const query = `INSERT INTO todos(title, user_uuid) VALUES(${Q}, ${Q})`;
+		const query = `\
+			INSERT INTO todos(title, user_uuid) \
+			VALUES(${Q}, ${Q})`;
 		const params = [title, userUUID];
 		const data = await this.db.query(query, params);
 
@@ -54,7 +62,10 @@ class TodoRepository {
 		if (subQuery.length == 0)
 			return false;
 
-		const query = `UPDATE todos SET ${subQuery.join(', ')} where user_uuid=${Q} AND uuid=${Q}`;
+		const query = `\
+			UPDATE todos \
+			SET ${subQuery.join(', ')} \
+			WHERE user_uuid=${Q} AND uuid=${Q}`;
 		params.push(userUUID);
 		params.push(todo.uuid);
 		const data = await this.db.query(query, params);
@@ -63,7 +74,9 @@ class TodoRepository {
 	}
 
 	async delete(userUUID, todoUUID) {
-		const query = `DELETE from todos where user_uuid=${Q} and uuid=${Q}`;
+		const query = `\
+			DELETE FROM todos \
+			WHERE user_uuid=${Q} and uuid=${Q}`;
 		const params = [userUUID, todoUUID];
 		const data = await this.db.query(query, params);
 

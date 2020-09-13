@@ -18,7 +18,11 @@ class UserRepository {
 	}
 
 	async readByNickname(nickname) {
-		const query = `SELECT uuid, user_id as userID, password, nickname from users where nickname=${Q} LIMIT 1`;
+		const query = `\
+			SELECT uuid, user_id as userID, password, nickname \
+			FROM users \
+			WHERE nickname=${Q} \
+			LIMIT 1`;
 		const params = [nickname];
 		const data = await this.db.query(query, params);
 
@@ -26,7 +30,11 @@ class UserRepository {
 	}
 
 	async verify(userID, password) {
-		const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} and password=${Q} LIMIT 1`;
+		const query = `\
+			SELECT uuid, user_id as userID, password, nickname \
+			FROM users \
+			WHERE user_id=${Q} and password=${Q} \
+			LIMIT 1`;
 		const params = [userID, await this._encryptWithSALT(password)];
 		const data = await this.db.query(query, params);
 
@@ -35,7 +43,9 @@ class UserRepository {
 
 	async create(userID, password, nickname) {
 		try {
-			const query = `INSERT INTO users(user_id, password, nickname) VALUES(${Q}, ${Q}, ${Q})`;
+			const query = `\
+				INSERT INTO users(user_id, password, nickname) \
+				VALUES(${Q}, ${Q}, ${Q})`;
 			// TODO: Password SALT값 시간으로 설정해보기 - https://m.blog.naver.com/magnking/221149100913
 			const params = [userID, await this._encryptWithSALT(password), nickname];
 			const data = await this.db.query(query, params);
@@ -61,7 +71,8 @@ class UserRepository {
 	}
 
 	async updatePassword(userID, oldPassword, newPassword) {
-		const query = `UPDATE users 
+		const query = `\
+			UPDATE users 
 			SET password=${Q} \
 			WHERE user_id=${Q} \
 			and password=${Q}`;
@@ -72,7 +83,9 @@ class UserRepository {
 	}
 
 	async delete(userID, password) {
-		const query = `DELETE from users where user_id=${Q} and password=${Q}`;
+		const query = `\
+			DELETE from users \
+			where user_id=${Q} and password=${Q}`;
 		const params = [userID, await this._encryptWithSALT(password)];
 		const data = await this.db.query(query, params);
 
@@ -80,7 +93,12 @@ class UserRepository {
 	}
 
 	async verifyUserID(userID) {
-		const query = `SELECT EXISTS (select * from users where user_id=${Q}) as success`;
+		const query = `\
+			SELECT EXISTS (\
+				SELECT * \
+				FROM users \
+				WHERE user_id=${Q}\
+			) as success`;
 		const params = [userID];
 		const data = await this.db.query(query, params);
 
@@ -88,7 +106,12 @@ class UserRepository {
 	}
 
 	async verifyNickname(nickname) {
-		const query = `SELECT EXISTS (select * from users where nickname=${Q}) as success`;
+		const query = `\
+			SELECT EXISTS (\
+				SELECT * \
+				FROM users \
+				WHERE nickname=${Q}\
+			) as success`;
 		const params = [nickname];
 		const data = await this.db.query(query, params);
 
