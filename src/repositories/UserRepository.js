@@ -27,7 +27,7 @@ class UserRepository {
 
 	async verify(userID, password) {
 		const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} and password=${Q} LIMIT 1`;
-		const params = [userID, sha256(password + configs.MYSQL.SALT)];
+		const params = [userID, await this._encryptWithSALT(password)];
 		const data = await this.db.query(query, params);
 
 		return data[0];
@@ -37,7 +37,7 @@ class UserRepository {
 		try {
 			const query = `INSERT INTO users(user_id, password, nickname) VALUES(${Q}, ${Q}, ${Q})`;
 			// TODO: Password SALT값 시간으로 설정해보기 - https://m.blog.naver.com/magnking/221149100913
-			const params = [userID, sha256(password + configs.MYSQL.SALT), nickname];
+			const params = [userID, await this._encryptWithSALT(password), nickname];
 			const data = await this.db.query(query, params);
 
 			return data.affectedRows > 0 ? true : false;
@@ -66,7 +66,7 @@ class UserRepository {
 
 	async delete(userID, password) {
 		const query = `DELETE from users where user_id=${Q} and password=${Q}`;
-		const params = [userID, sha256(password + configs.MYSQL.SALT)];
+		const params = [userID, await this._encryptWithSALT(password)];
 		const data = await this.db.query(query, params);
 
 		return data.affectedRows > 0 ? true : false;
@@ -86,6 +86,10 @@ class UserRepository {
 		const data = await this.db.query(query, params);
 
 		return data[0].success == 0;
+	}
+
+	async _encryptWithSALT(data) {
+		return sha256(data + configs.MYSQL.SALT);
 	}
 }
 
