@@ -105,10 +105,25 @@ module.exports = {
 			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
-	// PATCH /users/change-password - Password 변경 API
-	changePassword: (req, res) => {
-		// TODO: email or phone 인증을 이용해서 API 구현
-		res.send('Comming Soon');
+	// PATCH /users/password - Password 변경 API
+	patchUserPassword: async (req, res) => {
+		const { oldPassword, newPassword } = req.body;
+		if ([oldPassword, newPassword].includes(undefined)) {
+			res.status(HTTP_STATUS_CODE.BadRequest).json({ message: '필요한 정보가 누락되었습니다.' });
+			return;
+		}
+
+		try {
+			const isSuccess = await userRepository.updatePassword(req.user.userID, oldPassword, newPassword);
+			if (isSuccess) {
+				res.status(HTTP_STATUS_CODE.NoContent).json({});
+			} else {
+				res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Password' });
+			}
+		} catch (e) {
+			Sentry.captureException(e);
+			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
+		}
 	},
 	// GET /users/sign-in - Sign In API
 	signIn: async (req, res) => {

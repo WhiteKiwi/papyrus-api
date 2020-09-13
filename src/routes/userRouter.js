@@ -9,6 +9,6 @@ router.use(authChecker);
 router.get('/', userController.getUser);
 router.patch('/', userController.patchUser);
 router.delete('/', userController.deleteUser);
-router.patch('/change-password', userController.changePassword);
+router.patch('/password', userController.patchUserPassword);
 
 module.exports = router;

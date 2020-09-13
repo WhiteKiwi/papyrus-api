@@ -60,8 +60,15 @@ class UserRepository {
 		// TODO: API 구현
 	}
 
-	updatePassword(userID, oldPassword, newPassword) {
-		// TODO: API 구현
+	async updatePassword(userID, oldPassword, newPassword) {
+		const query = `UPDATE users 
+			SET password=${Q} \
+			WHERE user_id=${Q} \
+			and password=${Q}`;
+		const params = [await this._encryptWithSALT(newPassword), userID, await this._encryptWithSALT(oldPassword)];
+		const data = await this.db.query(query, params);
+
+		return data.affectedRows > 0 ? true : false;
 	}
 
 	async delete(userID, password) {
