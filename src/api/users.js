@@ -1,8 +1,16 @@
-const router = require('express').Router();
+const router = require('express-promise-router')();
 const userController = require('../controllers/userController');
 
-// Auth API
+// Middleware
+const authChecker = require('../middlewares/authChecker');
+
+// User API
+router.get('/', authChecker, userController.getUser);
 router.post('/', userController.postUser);
+router.patch('/', authChecker, userController.patchUser);
+router.delete('/', authChecker, userController.deleteUser);
+router.patch('/password', authChecker, userController.patchUserPassword);
+
 router.get('/verify-user-id', userController.verifyUserID);
 router.get('/verify-nickname', userController.verifyNickname);
 

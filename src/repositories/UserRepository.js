@@ -1,8 +1,8 @@
 const sha256 = require('sha256');
 const configs = require('../configs');
 const DB = require('../utils/database');
-const { Q } = require('../utils/constants');
-const errorGenerator = require('../utils/error-gen');
+const { Q, HTTP_STATUS_CODE } = require('../utils/constants');
+const { HTTPError } = require('../utils/errors');
 
 class UserRepository {
 	constructor() {
@@ -53,7 +53,7 @@ class UserRepository {
 			return data.affectedRows > 0 ? true : false;
 		} catch (e) {
 			if (e.errno === 1062) { // MySql Error No.
-				throw errorGenerator(1062, 'User ID 또는 Nickname이 중복되었습니다.');
+				throw new HTTPError({ statusCode: HTTP_STATUS_CODE.Conflict, message: 'User ID 또는 Nickname이 중복되었습니다.' });
 			} else
 				throw e;
 		}

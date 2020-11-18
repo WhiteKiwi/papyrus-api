@@ -8,16 +8,11 @@ const userRepository = new UserRepository();
 module.exports = {
 	// GET /users
 	getUser: async (req, res) => {
-		try {
-			const user = await userRepository.readByUserID(req.user.userID);
-			if (user)
-				res.json(user);
-			else
-				res.status(HTTP_STATUS_CODE.NotFound).json({ message: 'Not Found' });
-		} catch (e) {
-			Sentry.captureException(e);
-			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
-		}
+		const user = await userRepository.readByUserID(req.user.userID);
+		if (user)
+			res.json(user);
+		else
+			res.status(HTTP_STATUS_CODE.NotFound).json({ message: 'Not Found' });
 	},
 	// POST /users
 	postUser: async (req, res) => {
@@ -27,21 +22,12 @@ module.exports = {
 			return;
 		}
 
-		try {
-			const isSuccess = await userRepository.create(userID, password, nickname);
-			if (isSuccess)
-				res.status(HTTP_STATUS_CODE.Created).json({});
-			else {
-				Sentry.captureMessage(`유저 생성 실패 for ID: ${userID}, Nickname: ${nickname}`);
-				res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
-			}
-		} catch (e) {
-			if (e.code === 1062) {
-				res.status(HTTP_STATUS_CODE.Conflict).json({ message: e.message });
-			} else {
-				Sentry.captureException(e);
-				res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
-			}
+		const isSuccess = await userRepository.create(userID, password, nickname);
+		if (isSuccess)
+			res.status(HTTP_STATUS_CODE.Created).json({});
+		else {
+			Sentry.captureMessage(`유저 생성 실패 for ID: ${userID}, Nickname: ${nickname}`);
+			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
 		}
 	},
 	// PATCH /users
@@ -57,18 +43,13 @@ module.exports = {
 			return;
 		}
 
-		try {
-			// TODO: 30일 이후 자동삭제 구현
-			const isSuccess = await userRepository.delete(req.user.userID, password);
-			if (isSuccess) {
-				// TODO: Token 거부리스트 구현
-				res.status(HTTP_STATUS_CODE.NoContent).json({});
-			} else {
-				res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Password' });
-			}
-		} catch (e) {
-			Sentry.captureException(e);
-			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
+		// TODO: 30일 이후 자동삭제 구현
+		const isSuccess = await userRepository.delete(req.user.userID, password);
+		if (isSuccess) {
+			// TODO: Token 거부리스트 구현
+			res.status(HTTP_STATUS_CODE.NoContent).json({});
+		} else {
+			res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Password' });
 		}
 	},
 	// GET /users/verify-user-id - User ID 중복 여부 검사
@@ -79,14 +60,8 @@ module.exports = {
 			return;
 		}
 
-		try {
-			const isOK = await userRepository.verifyUserID(userID);
-
-			res.json({ 'isOK': isOK });
-		} catch (e) {
-			Sentry.captureException(e);
-			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
-		}
+		const isOK = await userRepository.verifyUserID(userID);
+		res.json({ isOK });
 	},
 	// GET /users/verify-nickname - 닉네임 중복 여부 검사
 	verifyNickname: async (req, res) => {
@@ -96,14 +71,8 @@ module.exports = {
 			return;
 		}
 
-		try {
-			const isOK = await userRepository.verifyNickname(nickname);
-
-			res.json({ 'isOK': isOK });
-		} catch (e) {
-			Sentry.captureException(e);
-			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
-		}
+		const isOK = await userRepository.verifyNickname(nickname);
+		res.json({ isOK });
 	},
 	// PATCH /users/password - Password 변경 API
 	patchUserPassword: async (req, res) => {
@@ -113,16 +82,11 @@ module.exports = {
 			return;
 		}
 
-		try {
-			const isSuccess = await userRepository.updatePassword(req.user.userID, oldPassword, newPassword);
-			if (isSuccess) {
-				res.status(HTTP_STATUS_CODE.NoContent).json({});
-			} else {
-				res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Password' });
-			}
-		} catch (e) {
-			Sentry.captureException(e);
-			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
+		const isSuccess = await userRepository.updatePassword(req.user.userID, oldPassword, newPassword);
+		if (isSuccess) {
+			res.status(HTTP_STATUS_CODE.NoContent).json({});
+		} else {
+			res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Password' });
 		}
 	},
 	// GET /users/sign-in - Sign In API
@@ -133,28 +97,23 @@ module.exports = {
 			return;
 		}
 
-		try {
-			const user = await userRepository.verify(userID, password);
-			if (user) {
-				let payload = {
-					uuid: user.uuid,
-					userID: user.userID,
-					nickname: user.nickname
-				};
-				let token = jwt.sign(payload, configs.JWT.SECRET, { expiresIn: '7d' });
+		const user = await userRepository.verify(userID, password);
+		if (user) {
+			let payload = {
+				uuid: user.uuid,
+				userID: user.userID,
+				nickname: user.nickname
+			};
+			let token = jwt.sign(payload, configs.JWT.SECRET, { expiresIn: '7d' });
 
-				// TODO: refresh Token도 구현하기
-				// TODO: Mongo DB에 Session 저장 및 검증
-				res.json({
-					'accessToken': token,
-					'refreshToken': ''
-				});
-			} else {
-				res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Information' });
-			}
-		} catch (e) {
-			Sentry.captureException(e);
-			res.status(HTTP_STATUS_CODE.InternalServerError).json({ message: 'Internal Server Error' });
+			// TODO: refresh Token도 구현하기
+			// TODO: Mongo DB에 Session 저장 및 검증
+			res.json({
+				'accessToken': token,
+				'refreshToken': ''
+			});
+		} else {
+			res.status(HTTP_STATUS_CODE.Unauthorized).json({ message: 'Incorrect Information' });
 		}
 	},
 	// GET /users/sign-out - 로그아웃
