@@ -1,8 +1,8 @@
 const sha256 = require('sha256');
 const configs = require('../configs');
 const DB = require('../utils/database');
-const { Q } = require('../utils/constants');
-const errorGenerator = require('../utils/error-gen');
+const { Q, HTTP_STATUS_CODE } = require('../utils/constants');
+const { HTTPError } = require('../utils/errors');
 
 class UserRepository {
 	constructor() {
@@ -18,7 +18,11 @@ class UserRepository {
 	}
 
 	async readByNickname(nickname) {
-		const query = `SELECT uuid, user_id as userID, password, nickname from users where nickname=${Q} LIMIT 1`;
+		const query = `\
+			SELECT uuid, user_id as userID, password, nickname \
+			FROM users \
+			WHERE nickname=${Q} \
+			LIMIT 1`;
 		const params = [nickname];
 		const data = await this.db.query(query, params);
 
@@ -26,8 +30,12 @@ class UserRepository {
 	}
 
 	async verify(userID, password) {
-		const query = `SELECT uuid, user_id as userID, password, nickname from users where user_id=${Q} and password=${Q} LIMIT 1`;
-		const params = [userID, sha256(password + configs.MYSQL.SALT)];
+		const query = `\
+			SELECT uuid, user_id as userID, password, nickname \
+			FROM users \
+			WHERE user_id=${Q} and password=${Q} \
+			LIMIT 1`;
+		const params = [userID, await this._encryptWithSALT(password)];
 		const data = await this.db.query(query, params);
 
 		return data[0];
@@ -35,15 +43,17 @@ class UserRepository {
 
 	async create(userID, password, nickname) {
 		try {
-			const query = `INSERT INTO users(user_id, password, nickname) VALUES(${Q}, ${Q}, ${Q})`;
+			const query = `\
+				INSERT INTO users(user_id, password, nickname) \
+				VALUES(${Q}, ${Q}, ${Q})`;
 			// TODO: Password SALT값 시간으로 설정해보기 - https://m.blog.naver.com/magnking/221149100913
-			const params = [userID, sha256(password + configs.MYSQL.SALT), nickname];
+			const params = [userID, await this._encryptWithSALT(password), nickname];
 			const data = await this.db.query(query, params);
 
 			return data.affectedRows > 0 ? true : false;
 		} catch (e) {
 			if (e.errno === 1062) { // MySql Error No.
-				throw errorGenerator(1062, 'User ID 또는 Nickname이 중복되었습니다.');
+				throw new HTTPError({ statusCode: HTTP_STATUS_CODE.Conflict, message: 'User ID 또는 Nickname이 중복되었습니다.' });
 			} else
 				throw e;
 		}
@@ -60,20 +70,35 @@ class UserRepository {
 		// TODO: API 구현
 	}
 
-	updatePassword(userID, oldPassword, newPassword) {
-		// TODO: API 구현
+	async updatePassword(userID, oldPassword, newPassword) {
+		const query = `\
+			UPDATE users 
+			SET password=${Q} \
+			WHERE user_id=${Q} \
+			and password=${Q}`;
+		const params = [await this._encryptWithSALT(newPassword), userID, await this._encryptWithSALT(oldPassword)];
+		const data = await this.db.query(query, params);
+
+		return data.affectedRows > 0 ? true : false;
 	}
 
 	async delete(userID, password) {
-		const query = `DELETE from users where user_id=${Q} and password=${Q}`;
-		const params = [userID, sha256(password + configs.MYSQL.SALT)];
+		const query = `\
+			DELETE from users \
+			where user_id=${Q} and password=${Q}`;
+		const params = [userID, await this._encryptWithSALT(password)];
 		const data = await this.db.query(query, params);
 
 		return data.affectedRows > 0 ? true : false;
 	}
 
 	async verifyUserID(userID) {
-		const query = `SELECT EXISTS (select * from users where user_id=${Q}) as success`;
+		const query = `\
+			SELECT EXISTS (\
+				SELECT * \
+				FROM users \
+				WHERE user_id=${Q}\
+			) as success`;
 		const params = [userID];
 		const data = await this.db.query(query, params);
 
@@ -81,11 +106,20 @@ class UserRepository {
 	}
 
 	async verifyNickname(nickname) {
-		const query = `SELECT EXISTS (select * from users where nickname=${Q}) as success`;
+		const query = `\
+			SELECT EXISTS (\
+				SELECT * \
+				FROM users \
+				WHERE nickname=${Q}\
+			) as success`;
 		const params = [nickname];
 		const data = await this.db.query(query, params);
 
 		return data[0].success == 0;
+	}
+
+	async _encryptWithSALT(data) {
+		return sha256(data + configs.MYSQL.SALT);
 	}
 }
 

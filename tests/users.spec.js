@@ -135,12 +135,80 @@ describe('POST /users/sign-in', () => {
 	});
 });
 
+describe('PATCH /users/password', () => {
+	it('패스워드 변경 - Bad Request', (done) => {
+		request(app)
+			.patch('/users/password')
+			.set({ 'Authorization': `Bearer ${accessToken}` })
+			.expect(400)
+			.end((e, res) => {
+				if (e)
+					done(e);
+				else
+					done();
+			});
+	});
+
+	it('패스워드 변경 - Incorrect Password', (done) => {
+		request(app)
+			.patch('/users/password')
+			.set({ 'Authorization': `Bearer ${accessToken}` })
+			.send({
+				oldPassword: testUser.password+'1',
+				newPassword: testUser.password
+			})
+			.expect(401)
+			.end((e, res) => {
+				if (e)
+					done(e);
+				else
+					done();
+			});
+	});
+
+	it('패스워드 변경 - Unauthorized', (done) => {
+		request(app)
+			.patch('/users/password')
+			.send({
+				oldPassword: testUser.password,
+				newPassword: testUser.password+'1'
+			})
+			.expect(401)
+			.end((e, res) => {
+				if (e)
+					done(e);
+				else {
+					done();
+				}
+			});
+	});
+	
+	it('패스워드 변경', (done) => {
+		request(app)
+			.patch('/users/password')
+			.set({ 'Authorization': `Bearer ${accessToken}` })
+			.send({
+				oldPassword: testUser.password,
+				newPassword: testUser.password+'1'
+			})
+			.expect(204)
+			.end((e, res) => {
+				if (e)
+					done(e);
+				else {
+					testUser.password = testUser.password + '1';
+					done();
+				}
+			});
+	});
+});
+
 describe('GET /users', () => {
 	it('내 정보 가져오기', (done) => {
 		request(app)
 			.get('/users')
-			.expect(200)
 			.set({ 'Authorization': `Bearer ${accessToken}` })
+			.expect(200)
 			.end((e, res) => {
 				if (e)
 					done(e);
