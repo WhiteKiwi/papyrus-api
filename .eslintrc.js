@@ -9,9 +9,10 @@ module.exports = {
 		'ecmaVersion': 11
 	},
 	'globals': {
-		'process': 'writable',
-		'describe': 'writable',
-		'it': 'writable'
+		'process': 'readonly',
+		'describe': 'readonly',
+		'it': 'readonly',
+		'expect': 'readonly',
 	},
 	'rules': {
 		'indent': [
